@@ -172,7 +172,7 @@ class Consumption extends Phaser.Scene {
             `We're trialing a new program - everyone who is unemployed will receive a subsidy they can live off of until they find a job. I hear it'll be popular!`,
             `Turns out popularity is expensive, if you catch my drift Prime Minister.`,
             `Your polls are doing just fantastic, Prime Minister!\nBut you know what would make them even better?`,
-            `Prime Minister, things are starting to get a bit dicey. I hear word that Badland is actually HAPPIER than we are as a whole than us. We need to show them who can throw more money at their citizens!`,
+            `Prime Minister, things are starting to get a bit dicey. I hear word that Badland is actually HAPPIER than we are as a whole than us. We need to show them who can throw more money at their citizens!`, // Sadland!
             `Ha! The opposition is calling our spending "reckless!" Don't worry - that just means that they're worried about their election chances.`,
             `Alright... election season is coming up soon. If there's anything more you're going to do to secure votes, I'd start doing it now.`,
             `Prime Minister, please - we really need a show of how invested the government is in its citizens right now. What if Badland is doing it better?`,

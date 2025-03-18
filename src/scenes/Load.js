@@ -39,6 +39,7 @@ class Load extends Phaser.Scene {
         this.load.image("jingoS", "NSA_small.png");
         this.load.image("turnButton", "nextturn.png");
         this.load.image("warButton", "warButton.png");
+        this.load.image("warTable", "tabletop_v2.png");
         
         // Load audio
         this.load.path = "./assets/audio";

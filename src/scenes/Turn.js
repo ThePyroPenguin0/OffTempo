@@ -22,7 +22,7 @@ class Turn extends Phaser.Scene {
             color: '#000000',
             backgroundColor: '#ffffff',
             padding: 10,
-            fixedWidth: 300 // Ensure enough space for text input
+            fixedWidth: 300
         }).setOrigin(0.5);
 
         if(this.ScoreMatrix.getTurn() == 10){

@@ -141,14 +141,14 @@ class Offense extends Phaser.Scene {
                     }
                     else if (budgetPercent <= 90 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
                         this.vibeSpeed *= 0.6;
-                        newText = `Sir, if you're preparing to launch a war, why not go all the way?`;
+                        newText = `Sir, if you're preparing to launch a war, why not go all in?`;
                         this.ScoreMatrix.subtTurnBudget(budgetPercent);
                         this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent)/2);
                         this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                     }
                     else if (budgetPercent <= 100 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
                         this.vibeSpeed *= 0.1;
-                        newText = `KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL!`;
+                        newText = `KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! I knew you were our guy.`;
                         this.ScoreMatrix.subtTurnBudget(budgetPercent);
                         this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent)/2);
                         this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
@@ -170,7 +170,7 @@ class Offense extends Phaser.Scene {
             `If we pour everything into attacking NOW, we can wipe out our enemies before they even have a chance to respond!`,
             `It's only Mutually Assured Destruction if you let them survive long enough to prepare a response, sir...`,
             `Look, by now, I'm sure everyone thinks you're a pacifist. Do you really want to be remembered that way? It's not too late to change your path...`,
-            `Zzzzzzzz... Bulldog away... Zzzzzzz...`,
+            `Sir, I fear it is too late to earn the respect of the electorate. But you know how you could earn their fear?`,
             `Sir, I know you care about reelection, but consider what truly matters in life - more bombers! More missiles! More kaboom!`,
             `You know, sir, nobody would expect you to attack this far into your administration. That's precisely why you should do it now!`,
             `Shock and awe, sir. Shock and awe.`,

@@ -9,13 +9,13 @@ class Play extends Phaser.Scene {
 
         this.posLock = false;
 
-        this.finance = this.add.image(game.config.width * 0.6, game.config.height * 0.65, "banker").setScale(1);
+        this.finance = this.add.image(game.config.width * 0.6, game.config.height * 0.65, "banker");
         this.finance.down = false;
-        this.defense = this.add.image(game.config.width * 0.4, game.config.height * 0.6, "defense").setScale(1);
+        this.defense = this.add.image(game.config.width * 0.4, game.config.height * 0.6, "defense");
         this.defense.down = false;
-        this.offense = this.add.image(game.config.width * 0.25, game.config.height * 0.7, "jingo").setScale(1);
+        this.offense = this.add.image(game.config.width * 0.25, game.config.height * 0.7, "jingo");
         this.offense.down = false;
-        this.consumption = this.add.image(game.config.width * 0.75, game.config.height * 0.7, "deputy").setScale(1);
+        this.consumption = this.add.image(game.config.width * 0.75, game.config.height * 0.7, "deputy");
         this.consumption.down = false;
 
         this.offense.setInteractive({
