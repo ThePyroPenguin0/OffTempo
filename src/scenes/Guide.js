@@ -16,7 +16,7 @@ class Guide extends Phaser.Scene {
             textStyle
         ).setOrigin(0.5, 0);
 
-        this.add.text(config.width * 0.5, config.height * 0.9, 
+        this.add.text(config.width * 0.5, config.height * 0.95, 
             "Press (ESCAPE) to exit to main menu.", 
             { ...textStyle, padding: { x: 20, y: 20 } }
         ).setOrigin(0.5, 1);
