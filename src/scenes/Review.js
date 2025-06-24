@@ -13,7 +13,7 @@ class Review extends Phaser.Scene {
             align: 'center',
             padding: { x: 20, y: 20 }
         }).setOrigin(0.5);
-
+        
         this.input.keyboard.on('keydown-ESC', () => {
             this.ScoreMatrix.resetMatrix();
             this.scene.start('menuScene');

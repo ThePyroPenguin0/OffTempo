@@ -1,4 +1,7 @@
 class Play extends Phaser.Scene {
+    init() {
+        this.turn = 0;
+    }
     constructor() {
         super('playScene');
     }
@@ -62,6 +65,7 @@ class Play extends Phaser.Scene {
         this.desk = this.add.image(game.config.width / 2, game.config.height * 0.7, "desk").setScale(2, 0.9);
 
         this.bob = 0;
+        this.lastBobUpdate = 0; // Track last bob update time
 
         this.offense.on('pointerdown', () => {
             this.offense.locked = true;
@@ -84,19 +88,21 @@ class Play extends Phaser.Scene {
             fill: '#ffffff',
             align: 'center',
             backgroundColor: '#000000',
-            padding: { x: 20, y: 20 }});
+            padding: { x: 20, y: 20 }
+        });
 
-            this.add.text(config.width * 0.05, config.height * 0.05, `This turn, the budget has been spent on:\nConsumption: ${this.ScoreMatrix.getMatrixEntry(0, this.ScoreMatrix.getTurn()-1, 1)}%\nInvestment: ${this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn()-1, 1)}%\nDefense: ${this.ScoreMatrix.getMatrixEntry(2, this.ScoreMatrix.getTurn()-1, 1)}%\nOffense: ${this.ScoreMatrix.getMatrixEntry(3, this.ScoreMatrix.getTurn()-1, 1)}%`, {
-                fontSize: '16px',
-                fill: '#ffffff',
-                align: 'center',
-                backgroundColor: '#000000',
-                padding: { x: 20, y: 20 }});
+        this.add.text(config.width * 0.05, config.height * 0.05, `This turn, the budget has been spent on:\nConsumption: ${this.ScoreMatrix.getMatrixEntry(0, this.ScoreMatrix.getTurn() - 1, 1)}%\nInvestment: ${this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn() - 1, 1)}%\nDefense: ${this.ScoreMatrix.getMatrixEntry(2, this.ScoreMatrix.getTurn() - 1, 1)}%\nOffense: ${this.ScoreMatrix.getMatrixEntry(3, this.ScoreMatrix.getTurn() - 1, 1)}%`, {
+            fontSize: '16px',
+            fill: '#ffffff',
+            align: 'center',
+            backgroundColor: '#000000',
+            padding: { x: 20, y: 20 }
+        });
 
         this.turnButton = this.add.image(game.config.width * 0.5, game.config.height * 0.95, "turnButton").setScale(1, 0.5).setInteractive();
         this.turnButton.on('pointerdown', () => {
             if (this.ScoreMatrix.getTurnBudget() != 0) {
-                this.showPopup(`Not all money has been spent!\nThe turn will not end until all money has been allocated.\nCurrently, the budget is allocated as follows:\nConsumption: ${this.ScoreMatrix.getMatrixEntry(0, this.ScoreMatrix.getTurn()-1, 1)}\nInvestment: ${this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn()-1, 1)}\nDefense: ${this.ScoreMatrix.getMatrixEntry(2, this.ScoreMatrix.getTurn()-1, 1)}\nOffense:${this.ScoreMatrix.getMatrixEntry(3, this.ScoreMatrix.getTurn()-1, 1)}\n`);
+                this.showPopup(`Not all money has been spent!\nThe turn will not end until all money has been allocated.\nCurrently, the budget is allocated as follows:\nConsumption: ${this.ScoreMatrix.getMatrixEntry(0, this.ScoreMatrix.getTurn() - 1, 1)}\nInvestment: ${this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn() - 1, 1)}\nDefense: ${this.ScoreMatrix.getMatrixEntry(2, this.ScoreMatrix.getTurn() - 1, 1)}\nOffense:${this.ScoreMatrix.getMatrixEntry(3, this.ScoreMatrix.getTurn() - 1, 1)}\n`);
             } else {
                 this.scene.start("turnScene");
             }
@@ -111,18 +117,23 @@ class Play extends Phaser.Scene {
             this.scene.start("warScene");
         });
 
-        // this.reviewButton = this.add.image(game.config.width * 0.9, game.config.height * 0.1, "reviewButton").setScale(1).setInteractive();
-        // this.reviewButton.on('pointerdown', () => {
-        //     this.scene.start("reviewScene");
-        // });
+        this.reportButton = this.add.image(game.config.width * 0.6, game.config.height * 0.1, "reportButton").setScale(1).setInteractive();
+        this.reportButton.on('pointerdown', () => {
+            this.scene.start("reportScene");
+        });
+
+        this.lastDefenseBob = 0;
+        this.lastOffenseBob = 0;
+        this.lastFinanceBob = 0;
+        this.lastConsumptionBob = 0;
     }
 
-    update() {
+    update(time, delta) {
         this.bob++;
-        this.bobUpdate();
+        this.bobUpdate(time);
 
         if (this.defense.locked) {
-            this.defense.x -= 20;
+            this.defense.x -= 7;
             this.defense.y = this.game.config.height * 0.7;
             if (this.defense.x < -200) {
                 this.scene.start("defenseScene");
@@ -130,21 +141,21 @@ class Play extends Phaser.Scene {
 
         }
         if (this.offense.locked) {
-            this.offense.x -= 20;
+            this.offense.x -= 5;
             this.offense.y = this.game.config.height * 0.7;
             if (this.offense.x < -200) {
                 this.scene.start("offenseScene");
             }
         }
         if (this.finance.locked) {
-            this.finance.x += 20;
+            this.finance.x += 3;
             this.finance.y = this.game.config.height * 0.7;
             if (this.finance.x > config.width + 200) {
                 this.scene.start("financeScene");
             }
         }
         if (this.consumption.locked) {
-            this.consumption.x += 20;
+            this.consumption.x += 5;
             this.consumption.y = this.game.config.height * 0.7;
             if (this.consumption.x > config.width + 200) {
                 this.scene.start("consumptionScene");
@@ -152,45 +163,53 @@ class Play extends Phaser.Scene {
         }
     }
 
-    bobUpdate() {
-        if (this.bob % 45 === 0 && !this.defense.down && !this.defense.locked) {
-            this.defense.y += 25;
-            this.defense.down = true;
-        }
-        else if (this.bob % 45 === 0 && this.defense.down) {
-            this.defense.y -= 25;
-            this.defense.down = false;
-        }
-
-        if (this.bob % 20 === 0 && !this.offense.down && !this.offense.locked) {
-            this.offense.y += 25;
-            this.offense.down = true;
-        }
-        else if (this.bob % 20 === 0 && this.offense.down) {
-            this.offense.y -= 25;
-            this.offense.down = false;
+    bobUpdate(time) {
+        if (!this.lastDefenseBob || time - this.lastDefenseBob >= 500) {
+            this.lastDefenseBob = time;
+            if (!this.defense.down && !this.defense.locked) {
+                this.defense.y += 25;
+                this.defense.down = true;
+            } else if (this.defense.down) {
+                this.defense.y -= 25;
+                this.defense.down = false;
+            }
         }
 
-        if (this.bob % 60 === 0 && !this.finance.down && !this.finance.locked) {
-            this.finance.y += 25;
-            this.finance.down = true;
-        }
-        else if (this.bob % 60 === 0 && this.finance.down) {
-            this.finance.y -= 25;
-            this.finance.down = false;
+        if (!this.lastOffenseBob || time - this.lastOffenseBob >= 575) {
+            this.lastOffenseBob = time;
+            if (!this.offense.down && !this.offense.locked) {
+                this.offense.y += 25;
+                this.offense.down = true;
+            } else if (this.offense.down) {
+                this.offense.y -= 25;
+                this.offense.down = false;
+            }
         }
 
-        if (this.bob % 35 === 0 && !this.consumption.down && !this.consumption.locked) {
-            this.consumption.y += 25;
-            this.consumption.down = true;
+        if (!this.lastFinanceBob || time - this.lastFinanceBob >= 900) {
+            this.lastFinanceBob = time;
+            if (!this.finance.down && !this.finance.locked) {
+                this.finance.y += 25;
+                this.finance.down = true;
+            } else if (this.finance.down) {
+                this.finance.y -= 25;
+                this.finance.down = false;
+            }
         }
-        else if (this.bob % 35 === 0 && this.consumption.down) {
-            this.consumption.y -= 25;
-            this.consumption.down = false;
+
+        if (!this.lastConsumptionBob || time - this.lastConsumptionBob >= 750) {
+            this.lastConsumptionBob = time;
+            if (!this.consumption.down && !this.consumption.locked) {
+                this.consumption.y += 25;
+                this.consumption.down = true;
+            } else if (this.consumption.down) {
+                this.consumption.y -= 25;
+                this.consumption.down = false;
+            }
         }
     }
 
-    
+
     showPopup(message) {
         let popup = this.add.text(game.config.width / 2, game.config.height / 2, message, {
             fontSize: '24px',
@@ -199,7 +218,7 @@ class Play extends Phaser.Scene {
             backgroundColor: '#000',
             padding: { x: 10, y: 10 }
         }).setOrigin(0.5);
-        
+
         this.time.delayedCall(8000, () => {
             popup.destroy();
         });
