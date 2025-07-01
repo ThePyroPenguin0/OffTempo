@@ -62,7 +62,7 @@ class Play extends Phaser.Scene {
             this.consumption.clearTint();
         });
 
-        this.desk = this.add.image(game.config.width / 2, game.config.height * 0.7, "desk").setScale(2, 0.9);
+        this.desk = this.add.image(game.config.width / 2, game.config.height * 0.71, "desk").setScale(2, 0.9);
 
         this.bob = 0;
         this.lastBobUpdate = 0; // Track last bob update time
@@ -108,18 +108,20 @@ class Play extends Phaser.Scene {
             }
         });
 
-        this.input.keyboard.on('keydown-ESC', () => {
-            this.scene.start('menuScene');
-        });
-
         this.warButton = this.add.image(game.config.width * 0.7, game.config.height * 0.95, "warButton").setScale(1, 0.5).setInteractive();
         this.warButton.on('pointerdown', () => {
             this.scene.start("warScene");
         });
 
-        this.reportButton = this.add.image(game.config.width * 0.6, game.config.height * 0.1, "reportButton").setScale(1).setInteractive();
+        this.reportButton = this.add.image(game.config.width * 0.3, game.config.height * 0.95, "reportButton").setScale(1, 0.5).setInteractive();
         this.reportButton.on('pointerdown', () => {
             this.scene.start("reportScene");
+        });
+
+        this.exitButton = this.add.image(game.config.width * 0.95, game.config.height * 0.075, "exitButton").setScale(0.5, 0.5).setInteractive();
+        this.exitButton.on('pointerdown', () => {
+            this.ScoreMatrix.resetMatrix();
+            this.scene.start('menuScene');
         });
 
         this.lastDefenseBob = 0;

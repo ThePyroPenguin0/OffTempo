@@ -47,7 +47,7 @@ class Defense extends Phaser.Scene {
         graphics.fillStyle(0x000000, 1);
         graphics.fillRect(dialogX, dialogY, dialogWidth, dialogHeight);
 
-        this.promptText = this.add.text(dialogX + 15, dialogY + 15, "Enter the percentage of this turn's budget you wish to allocate to offensive capabilities.\n\nClick the Defense Minister to see what he has to say.", {
+        this.promptText = this.add.text(dialogX + 15, dialogY + 15, "Enter the percentage of this turn's budget you wish to allocate to defensive capabilities.\n\nClick the Defense Minister to see what he has to say.\n\nPress (ENTER) to confirm your allocation.\nIf a budget has already been allocated, entering a new value will replace it.", {
             fontFamily: 'Courier, monospace',
             fontSize: '24px',
             color: '#ffffff',
@@ -71,7 +71,7 @@ class Defense extends Phaser.Scene {
         );
         bubbleGraphics.setVisible(false);
 
-        this.dialogText = this.add.text(bubbleX + 20, bubbleY + 20, "text test", {
+        this.dialogText = this.add.text(bubbleX + 20, bubbleY + 20, "You should not see this!", {
             fontFamily: 'Courier, monospace',
             fontSize: '28px',
             align: "center",
