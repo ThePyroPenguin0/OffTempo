@@ -27,7 +27,13 @@ class Guide3 extends Phaser.Scene {
         this.rulebook = this.add.image(game.config.width * 0.925, game.config.height * 0.33, "book").setScale(1).setInteractive();
 
         this.input.keyboard.on('keydown-ESC', () => {
-            this.scene.start('menuScene');
+            if(this.ingame) {
+                this.ingame = false;
+                this.scene.start('playScene');
+            }
+            else {
+                this.scene.start('menuScene');
+            }
         });
 
         this.input.keyboard.on('keydown-LEFT', () => {

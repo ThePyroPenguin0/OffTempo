@@ -51,6 +51,10 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
         return (percent / 100) * this.budget;
     }
 
+    getTurnBudgetPercent() {
+        return (this.turnBudget / this.budget) * 100;
+    }
+
     subtTurnBudget(percent) {
         let subt = this.budget * (percent / 100);
         this.turnBudget -= subt;
@@ -153,6 +157,7 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
         this.matrix = Array.from({ length: 4 }, () =>
             Array.from({ length: 10 }, () => [0, 0])
         );
+        this.turn = 1;
     }
     
 }

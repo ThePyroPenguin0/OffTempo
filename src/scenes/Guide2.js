@@ -30,7 +30,13 @@ class Guide2 extends Phaser.Scene {
         this.add.image(config.width*0.9, config.height*0.7, "jingoS").setOrigin(0.5).setScale(0.4);
 
         this.input.keyboard.on('keydown-ESC', () => {
-            this.scene.start('menuScene');
+            if(this.ingame) {
+                this.ingame = false;
+                this.scene.start('playScene');
+            }
+            else {
+                this.scene.start('menuScene');
+            }
         });
 
         this.input.keyboard.on('keydown-LEFT', () => {

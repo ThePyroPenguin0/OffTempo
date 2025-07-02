@@ -48,6 +48,7 @@ class Turn extends Phaser.Scene {
                 }
                 else if(this.ScoreMatrix.getTurn() == 10 || inputText.text == 999 || this.won)
                 {
+                    this.won = false;
                     this.scene.start("reviewScene");
                 }
                 else {

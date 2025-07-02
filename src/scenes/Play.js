@@ -1,7 +1,4 @@
 class Play extends Phaser.Scene {
-    init() {
-        this.turn = 0;
-    }
     constructor() {
         super('playScene');
     }
@@ -91,7 +88,7 @@ class Play extends Phaser.Scene {
             padding: { x: 20, y: 20 }
         });
 
-        this.add.text(config.width * 0.05, config.height * 0.05, `This turn, the budget has been spent on:\nConsumption: ${this.ScoreMatrix.getMatrixEntry(0, this.ScoreMatrix.getTurn() - 1, 1)}%\nInvestment: ${this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn() - 1, 1)}%\nDefense: ${this.ScoreMatrix.getMatrixEntry(2, this.ScoreMatrix.getTurn() - 1, 1)}%\nOffense: ${this.ScoreMatrix.getMatrixEntry(3, this.ScoreMatrix.getTurn() - 1, 1)}%`, {
+        this.add.text(config.width * 0.05, config.height * 0.05, `This turn, the budget has been spent on:\nConsumption: ${this.ScoreMatrix.getMatrixEntry(0, this.ScoreMatrix.getTurn() - 1, 1)}%\nInvestment: ${this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn() - 1, 1)}%\nDefense: ${this.ScoreMatrix.getMatrixEntry(2, this.ScoreMatrix.getTurn() - 1, 1)}%\nOffense: ${this.ScoreMatrix.getMatrixEntry(3, this.ScoreMatrix.getTurn() - 1, 1)}%\nTurn budget remaining: $${this.ScoreMatrix.getTurnBudget()}\nTurn budget percent remaining: ${this.ScoreMatrix.getTurnBudgetPercent()}%`, {
             fontSize: '16px',
             fill: '#ffffff',
             align: 'center',
@@ -126,7 +123,6 @@ class Play extends Phaser.Scene {
 
         this.rulebook = this.add.image(game.config.width * 0.95, game.config.height * 0.15, "book").setScale(1).setInteractive();
         this.rulebook.on('pointerdown', () => {
-            this.ScoreMatrix.resetMatrix();
             this.scene.start('guideScene', {ingame: true});
         });
 
