@@ -124,6 +124,12 @@ class Play extends Phaser.Scene {
             this.scene.start('menuScene');
         });
 
+        this.rulebook = this.add.image(game.config.width * 0.95, game.config.height * 0.15, "book").setScale(1).setInteractive();
+        this.rulebook.on('pointerdown', () => {
+            this.ScoreMatrix.resetMatrix();
+            this.scene.start('guideScene', {ingame: true});
+        });
+
         this.lastDefenseBob = 0;
         this.lastOffenseBob = 0;
         this.lastFinanceBob = 0;
