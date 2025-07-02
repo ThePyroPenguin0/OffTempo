@@ -27,7 +27,7 @@ class Turn extends Phaser.Scene {
 
         if(this.ScoreMatrix.getTurn() == 10){
             inputText.visible = false;
-            promptText.setText("Congratulations!\nAfter a long and arduous tenure as Prime Minister, you may now step down, knowing you have guided your nation well.\nBut did you lead your nation better than your opponent?\nThere is no need for a code this turn, simply press enter to review your game.");
+            promptText.setText("Congratulations!\nAfter a long and arduous tenure as Prime Minister,\nyou may now step down, knowing you have guided your nation well.\nBut did you lead your nation better than your opponent?\nThere is no need for a code this turn, simply press enter to review your game.");
         }
         else if(this.ScoreMatrix.consumptionUpdate() >= 1000){
             this.won = true;
