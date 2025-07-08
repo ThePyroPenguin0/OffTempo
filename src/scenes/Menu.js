@@ -42,7 +42,7 @@ class Menu extends Phaser.Scene {
         }
 
         this.add.text(game.config.width / 2, game.config.height / 3, "Off Tempo", titleText).setOrigin(0.5);
-        this.add.text(game.config.width / 2, game.config.height / 2, "A Resource Management Game for the Department of Defense Management", subtitleText).setOrigin(0.5);
+        this.add.text(game.config.width / 2, game.config.height / 2, "A Resource Management Game for the Department of Defense Management, Naval Postgraduate School", subtitleText).setOrigin(0.5);
 
         this.add.text(game.config.width * 0.25, game.config.height * 0.75, "Press (ENTER) to begin", subtitleText).setOrigin(0.5);
         this.add.text(game.config.width * 0.75, game.config.height * 0.75, "Press (R) to view rules", subtitleText).setOrigin(0.5);
