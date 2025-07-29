@@ -122,7 +122,7 @@ class Consumption extends Phaser.Scene {
                         this.ScoreMatrix.restoreTurnBudget(prevPercent);
                     }
                     // Validate input
-                    if (budgetPercent > 100 || budgetPercent > this.ScoreMatrix.getTurnBudgetPercent()) {
+                    if (budgetPercent > 100 || budgetPercent > Math.round(this.ScoreMatrix.getTurnBudgetPercent())) {
                         this.vibeSpeed = 50;
                         this.ScoreMatrix.subtTurnBudget(prevPercent);
                         newText = "Between you and me, I think this is fine. The public, however, really doesn't like deficits. Try again.";
@@ -142,8 +142,9 @@ class Consumption extends Phaser.Scene {
                     }
 
 
-                    if (this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-
+                    let absToSpend = this.ScoreMatrix.getBudgetAbsolute(budgetPercent);
+                    let remaining = this.ScoreMatrix.getTurnBudget();
+                    if (remaining + 0.05 >= absToSpend) {
                         if (budgetPercent <= 10 && this.ScoreMatrix.getTurnBudget() > this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
                             newText = "Surely this is a mistake? A typographical error?!";
                             this.vibeSpeed = 60;

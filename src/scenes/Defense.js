@@ -146,7 +146,9 @@ class Defense extends Phaser.Scene {
                         });
                         return;
                     }
-                    if (this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
+                    let absToSpend = this.ScoreMatrix.getBudgetAbsolute(budgetPercent);
+                    let remaining = this.ScoreMatrix.getTurnBudget();
+                    if (remaining + 0.05 >= absToSpend) {
                         if (budgetPercent <= 10 && this.ScoreMatrix.getTurnBudget() > this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
                             newText = "We're doomed.";
                             this.vibeSpeed = 60;
@@ -237,7 +239,7 @@ class Defense extends Phaser.Scene {
         backButton.on('pointerout', () => {
             backButton.setBackgroundColor('#DDDDDD');
         });
-        
+
         backButton.on('pointerdown', () => {
             this.scene.start('playScene');
         });

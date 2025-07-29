@@ -105,14 +105,35 @@ class Play extends Phaser.Scene {
             }
         });
 
+        this.turnButton.on('pointerover', () => {
+            this.turnButton.setTint(0xdddddd);
+        });
+        this.turnButton.on('pointerout', () => {
+            this.turnButton.clearTint();
+        });
+
         this.warButton = this.add.image(game.config.width * 0.7, game.config.height * 0.95, "warButton").setScale(1, 0.5).setInteractive();
         this.warButton.on('pointerdown', () => {
             this.scene.start("warScene");
         });
 
+        this.warButton.on('pointerover', () => {
+            this.warButton.setTint(0xdddddd);
+        });
+        this.warButton.on('pointerout', () => {
+            this.warButton.clearTint();
+        });
+
         this.reportButton = this.add.image(game.config.width * 0.3, game.config.height * 0.95, "reportButton").setScale(1, 0.5).setInteractive();
         this.reportButton.on('pointerdown', () => {
             this.scene.start("reportScene");
+        });
+
+        this.reportButton.on('pointerover', () => {
+            this.reportButton.setTint(0xdddddd);
+        });
+        this.reportButton.on('pointerout', () => {
+            this.reportButton.clearTint();
         });
 
         this.exitButton = this.add.image(game.config.width * 0.95, game.config.height * 0.075, "exitButton").setScale(0.5, 0.5).setInteractive();
@@ -121,10 +142,24 @@ class Play extends Phaser.Scene {
             this.scene.start('menuScene');
         });
 
+    this.exitButton.on('pointerover', () => {
+        this.exitButton.setTint(0xdddddd);
+    });
+    this.exitButton.on('pointerout', () => {
+        this.exitButton.clearTint();
+    });
+
         this.rulebook = this.add.image(game.config.width * 0.95, game.config.height * 0.15, "book").setScale(1).setInteractive();
         this.rulebook.on('pointerdown', () => {
             this.scene.start('guideScene', {ingame: true});
         });
+
+    this.rulebook.on('pointerover', () => {
+        this.rulebook.setTint(0xdddddd);
+    });
+    this.rulebook.on('pointerout', () => {
+        this.rulebook.clearTint();
+    });
 
         this.lastDefenseBob = 0;
         this.lastOffenseBob = 0;
