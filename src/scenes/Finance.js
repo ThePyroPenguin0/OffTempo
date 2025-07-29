@@ -5,6 +5,8 @@ class Finance extends Phaser.Scene {
 
     create() {
         this.clicked = false;
+        this.typing = false;
+        this.locked = false;
         this.turnPercent = 0;
         this.vibeSpeed = 50;
         this.add.graphics();
@@ -15,17 +17,17 @@ class Finance extends Phaser.Scene {
         if (this.textures.exists('gradientBG')) {
             this.textures.remove('gradientBG');
         }
-        
+
         let gradient = this.textures.createCanvas('gradientBG', width, height);
         let ctx = gradient.getSourceImage().getContext('2d');
-        
+
         let grd = ctx.createLinearGradient(0, 0, 0, height);
         grd.addColorStop(0, '#FFA8A8');
-        grd.addColorStop(1, '#800000');
-        
+        grd.addColorStop(1, '#ba2525ff');
+
         ctx.fillStyle = grd;
         ctx.fillRect(0, 0, width, height);
-        
+
         gradient.refresh();
 
 
@@ -108,55 +110,62 @@ class Finance extends Phaser.Scene {
                 } else if (event.key === 'Backspace') {
                     inputText.setText(inputText.text.slice(0, -1));
                 }
-                if (event.key === 'Enter') {
-                    if (this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn() - 1, 1) != 0) {
-                        this.ScoreMatrix.restoreTurnBudget(this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn() - 1, 1));
-                    }
+                if (event.key === 'Enter' && !this.typing) {
                     this.clicked = true;
                     locked = true;
                     bubbleGraphics.visible = true;
                     this.dialogText.setVisible(true);
                     let newText = "";
                     let budgetPercent = parseInt(inputText.text.replace(/[|%]/g, ''), 10);
-                    if (budgetPercent <= 10 && this.ScoreMatrix.getTurnBudget() > this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                        newText = "Respectfully... sir... how do you expect to buy anything else when you have so little money to buy with?";
-                        this.vibeSpeed *= 1.2;
-                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    let prevPercent = this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn() - 1, 1);
+                    if (prevPercent) {
+                        this.ScoreMatrix.restoreTurnBudget(prevPercent);
                     }
-                    else if (budgetPercent <= 30 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                        this.vibeSpeed *= 1;
-                        newText = "Are you sure, sir? Do try not to forget about the importance of a healthy economy...";
-                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                    }
-                    else if (budgetPercent <= 70 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                        this.vibeSpeed *= 0.8;
-                        newText = "Ah, yes. A perfectly... acceptable sum.";
-                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                    }
-                    else if (budgetPercent <= 90 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                        this.vibeSpeed *= 0.6;
-                        newText = "Oh, yes sir! We'll be sure to put this to good use so you can put it to good use later.";
-                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                    }
-                    else if (budgetPercent <= 100 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                        this.vibeSpeed *= 0.1;
-                        newText = "I... Thank you, sir. We'll be extra careful not to get scammed this year.";
-                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                    }
-                    else {
+                    // Validate input
+                    if (budgetPercent > 100 || budgetPercent > this.ScoreMatrix.getTurnBudgetPercent()) {
+                        this.ScoreMatrix.subtTurnBudget(prevPercent);
+                        newText = "Sir, it is to my great dismay I must inform you that deficit spending was outlawed after the Austrians took over. We are still working on getting that repealed. In the meantime, try again.";
+                        this.startTypewriterEffect(newText);
                         this.clicked = false;
                         locked = false;
-                        newText = "Sir, it is to my great dismay I must inform you that deficit spending was outlawed after the Austrians took over. We are still working on getting that repealed. In the meantime, try again."
+                        return;
+                    }
+                    if (this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
+                        if (budgetPercent <= 10 && this.ScoreMatrix.getTurnBudget() > this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
+                            newText = "Respectfully... sir... how do you expect to buy anything else when you have so little money to buy with?";
+                            this.vibeSpeed *= 1.2;
+                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
+                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                        }
+                        else if (budgetPercent <= 30 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
+                            this.vibeSpeed *= 1;
+                            newText = "Are you sure, sir? Do try not to forget about the importance of a healthy economy...";
+                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
+                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                        }
+                        else if (budgetPercent <= 70 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
+                            this.vibeSpeed *= 0.8;
+                            newText = "Ah, yes. A perfectly... acceptable sum.";
+                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
+                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                        }
+                        else if (budgetPercent <= 90 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
+                            this.vibeSpeed *= 0.6;
+                            newText = "Oh, yes sir! We'll be sure to put this to good use so you can put it to good use later.";
+                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
+                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                        }
+                        else if (budgetPercent <= 100 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
+                            this.vibeSpeed *= 0.1;
+                            newText = "I... Thank you, sir. We'll be extra careful not to get scammed this year.";
+                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
+                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                        }
                     }
                     this.startTypewriterEffect(newText);
                     console.log(this.ScoreMatrix);
@@ -217,10 +226,16 @@ class Finance extends Phaser.Scene {
             delay: 50,
             repeat: text.length - 1,
             callback: () => {
-                this.dialogText.setText(this.dialogText.text + text[this.typingIndex]);
-                this.typingIndex++;
+                if (this.typingIndex < text.length) {
+                    this.dialogText.setText(this.dialogText.text + text[this.typingIndex]);
+                    this.typingIndex++;
+                }
+                if (this.typingIndex >= text.length) {
+                    this.typing = false;
+                }
             }
         });
+
     }
 
     vibeCheck(frames, rate) {

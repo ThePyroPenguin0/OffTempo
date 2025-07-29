@@ -13,7 +13,14 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
 
     updateMatrix(resource, turn, bud, value) {
         if (resource < 4 && turn < 10 && bud < 2) {
-            this.matrix[resource][turn][bud] = value;
+            // bud==0: absolute budget, round to two decimals; bud==1: percent, round to nearest whole
+            if (bud === 0) {
+                this.matrix[resource][turn][bud] = Math.round(value * 100) / 100;
+            } else if (bud === 1) {
+                this.matrix[resource][turn][bud] = Math.round(value);
+            } else {
+                this.matrix[resource][turn][bud] = value;
+            }
         }
         // Rows: Resources
         // Columns: Turn
@@ -44,11 +51,11 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
     }
 
     getTurnBudget() {
-        return this.turnBudget;
+        return Math.round(this.turnBudget);
     }
 
     getBudgetAbsolute(percent) {
-        return (percent / 100) * this.budget;
+        return Math.round(((percent / 100) * this.budget) * 10) / 10;
     }
 
     getTurnBudgetPercent() {
@@ -56,18 +63,26 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
     }
 
     subtTurnBudget(percent) {
-        let subt = this.budget * (percent / 100);
-        this.turnBudget -= subt;
+        let subt = Math.round((this.budget * (percent / 100)) * 10) / 10;
+        this.turnBudget = Math.round((this.turnBudget - subt) * 10) / 10;
     }
 
     restoreTurnBudget(percent) {
-        let add = this.budget * (percent / 100);
-        this.turnBudget += add;
+        console.log(`Restoring turn budget with percent: ${percent}`);
+        let add = Math.round((this.budget * (percent / 100)) * 10) / 10;
+        this.turnBudget = Math.round((this.turnBudget + add) * 10) / 10;
+        console.log(`Turn budget after restoration: ${this.turnBudget}`);
     }
 
-
     getMatrixEntry(resource, turn, bud) {
-        return this.matrix[resource][turn][bud];
+        // Return with correct rounding: absolute budget to two decimals, percent to whole number
+        if (bud === 0) {
+            return Math.round(this.matrix[resource][turn][bud] * 100) / 100;
+        } else if (bud === 1) {
+            return Math.round(this.matrix[resource][turn][bud]);
+        } else {
+            return this.matrix[resource][turn][bud];
+        }
     }
 
     advanceTurn() {
@@ -78,6 +93,7 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
     getTurnCode() {
         return this.turnCodes[this.turn - 1];
     }
+    
     displayMatrix(scene) {
         const matrix = this.getMatrix();
         const matrixWidth = 4;
@@ -158,6 +174,9 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
             Array.from({ length: 10 }, () => [0, 0])
         );
         this.turn = 1;
+        this.budget = 100;
+        this.turnBudget = this.budget;
+        this.consumptionThreshold = 0;
     }
     
 }

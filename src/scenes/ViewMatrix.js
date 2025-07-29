@@ -19,7 +19,7 @@ class ViewMatrix extends Phaser.Scene {
         
         this.input.keyboard.on('keydown-ESC', () => {
             console.log(`Current stats:
-                ${this.turn} turns playedn\n
+                ${this.turn} turns played\n
                 ${this.ScoreMatrix.sumRow(0)} spent on consumption\n
                 ${this.ScoreMatrix.sumRow(1)} spent on investment\n
                 ${this.ScoreMatrix.sumRow(2)} spent on defense\n
