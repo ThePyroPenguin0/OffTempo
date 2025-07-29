@@ -144,7 +144,7 @@ class Consumption extends Phaser.Scene {
 
                     let absToSpend = this.ScoreMatrix.getBudgetAbsolute(budgetPercent);
                     let remaining = this.ScoreMatrix.getTurnBudget();
-                    if (remaining + 0.05 >= absToSpend) {
+                    if (remaining + 0.2 >= absToSpend) {
                         if (budgetPercent <= 10 && this.ScoreMatrix.getTurnBudget() > this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
                             newText = "Surely this is a mistake? A typographical error?!";
                             this.vibeSpeed = 60;
