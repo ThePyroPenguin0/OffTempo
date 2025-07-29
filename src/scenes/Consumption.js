@@ -123,55 +123,73 @@ class Consumption extends Phaser.Scene {
                     }
                     // Validate input
                     if (budgetPercent > 100 || budgetPercent > this.ScoreMatrix.getTurnBudgetPercent()) {
+                        this.vibeSpeed = 50;
                         this.ScoreMatrix.subtTurnBudget(prevPercent);
                         newText = "Between you and me, I think this is fine. The public, however, really doesn't like deficits. Try again.";
                         this.startTypewriterEffect(newText);
-                        this.clicked = false;
-                        locked = false;
+                        let checkTyping = this.time.addEvent({
+                            delay: 50,
+                            loop: true,
+                            callback: () => {
+                                if (!this.typing) {
+                                    this.clicked = false;
+                                    locked = false;
+                                    checkTyping.remove();
+                                }
+                            }
+                        });
                         return;
                     }
 
 
                     if (this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                
+
                         if (budgetPercent <= 10 && this.ScoreMatrix.getTurnBudget() > this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
                             newText = "Surely this is a mistake? A typographical error?!";
-                            this.vibeSpeed *= 1.2;
+                            this.vibeSpeed = 60;
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                             this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         else if (budgetPercent <= 30 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed *= 1;
+                            this.vibeSpeed = 50;
                             newText = "Prime Minister, the public will notice how much you spent on them - and how much you didn't!";
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                             this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         else if (budgetPercent <= 70 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed *= 0.8;
+                            this.vibeSpeed = 40;
                             newText = "That'll definitely get the media's attention and boost your popularity!";
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                             this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         else if (budgetPercent <= 90 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed *= 0.6;
+                            this.vibeSpeed = 30;
                             newText = `I can see it now - "Hero of the Common Man!" with a big and flattering picture of you on the front page. Good choice!`;
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                             this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         else if (budgetPercent <= 100 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed *= 0.1;
+                            this.vibeSpeed = 20;
                             newText = "I don't even know what to do with so much- actually, nevermind, I'll think of something. Thank you, Prime Minister!";
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                            this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         this.startTypewriterEffect(newText);
-                        // console.log(this.ScoreMatrix);
-                        // console.log(this.ScoreMatrix.getTurnBudget());
+                        let checkTyping = this.time.addEvent({
+                            delay: 50,
+                            loop: true,
+                            callback: () => {
+                                if (!this.typing) {
+                                    this.clicked = false;
+                                    locked = false;
+                                    checkTyping.remove();
+                                }
+                            }
+                        });
                     }
                 }
             }
@@ -209,6 +227,12 @@ class Consumption extends Phaser.Scene {
             padding: { x: 10, y: 5 }
         }).setInteractive();
 
+        backButton.on('pointerover', () => {
+            backButton.setBackgroundColor('#AAAAAA');
+        });
+        backButton.on('pointerout', () => {
+            backButton.setBackgroundColor('#DDDDDD');
+        });
         backButton.on('pointerdown', () => {
             this.scene.start('playScene');
         });

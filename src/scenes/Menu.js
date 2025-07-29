@@ -44,23 +44,37 @@ class Menu extends Phaser.Scene {
         this.add.text(game.config.width / 2, game.config.height / 3, "Off Tempo", titleText).setOrigin(0.5);
         this.add.text(game.config.width / 2, game.config.height / 2, "A Resource Management Game for the Department of Defense Management, Naval Postgraduate School", subtitleText).setOrigin(0.5);
 
-        this.add.text(game.config.width * 0.25, game.config.height * 0.75, "Press (ENTER) to begin", subtitleText).setOrigin(0.5);
-        this.add.text(game.config.width * 0.75, game.config.height * 0.75, "Press (R) to view rules", subtitleText).setOrigin(0.5);
-
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-        keyESCAPE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
-        keyRESTART = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
-
-        this.input.keyboard.on('keydown-ENTER', () => {
+        // Create Start Game button
+        const startButton = this.add.text(game.config.width * 0.25, game.config.height * 0.75, "Start Game", subtitleText)
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true });
+        startButton.on('pointerover', () => {
+            startButton.setBackgroundColor('#AAAAAA');
+        });
+        startButton.on('pointerout', () => {
+            startButton.setBackgroundColor('#074b8a');
+        });
+        startButton.on('pointerdown', () => {
             this.scene.start('playScene');
         });
+
+        // Create View Rules button
+        const rulesButton = this.add.text(game.config.width * 0.75, game.config.height * 0.75, "View Rules", subtitleText)
+            .setOrigin(0.5)
+            .setInteractive({ useHandCursor: true });
+        rulesButton.on('pointerover', () => {
+            rulesButton.setBackgroundColor('#AAAAAA');
+        });
+        rulesButton.on('pointerout', () => {
+            rulesButton.setBackgroundColor('#074b8a');
+        });
+        rulesButton.on('pointerdown', () => {
+            this.scene.start('guideScene');
+        });
+
+        // Remove keyboard navigation for these actions
     }
 
     update() {
-
-        if (Phaser.Input.Keyboard.JustDown(keyRESTART)) {
-            this.scene.start('guideScene');
-        }
     }
 }

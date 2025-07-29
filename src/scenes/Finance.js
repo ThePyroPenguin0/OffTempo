@@ -123,44 +123,54 @@ class Finance extends Phaser.Scene {
                     }
                     // Validate input
                     if (budgetPercent > 100 || budgetPercent > this.ScoreMatrix.getTurnBudgetPercent()) {
+                        this.vibeSpeed = 50;
                         this.ScoreMatrix.subtTurnBudget(prevPercent);
                         newText = "Sir, it is to my great dismay I must inform you that deficit spending was outlawed after the Austrians took over. We are still working on getting that repealed. In the meantime, try again.";
                         this.startTypewriterEffect(newText);
-                        this.clicked = false;
-                        locked = false;
+                        let checkTyping = this.time.addEvent({
+                            delay: 50,
+                            loop: true,
+                            callback: () => {
+                                if (!this.typing) {
+                                    this.clicked = false;
+                                    locked = false;
+                                    checkTyping.remove();
+                                }
+                            }
+                        });
                         return;
                     }
                     if (this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
                         if (budgetPercent <= 10 && this.ScoreMatrix.getTurnBudget() > this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
                             newText = "Respectfully... sir... how do you expect to buy anything else when you have so little money to buy with?";
-                            this.vibeSpeed *= 1.2;
+                            this.vibeSpeed = 60;
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                             this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         else if (budgetPercent <= 30 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed *= 1;
+                            this.vibeSpeed = 50;
                             newText = "Are you sure, sir? Do try not to forget about the importance of a healthy economy...";
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                             this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         else if (budgetPercent <= 70 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed *= 0.8;
+                            this.vibeSpeed = 40;
                             newText = "Ah, yes. A perfectly... acceptable sum.";
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                             this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         else if (budgetPercent <= 90 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed *= 0.6;
+                            this.vibeSpeed = 30;
                             newText = "Oh, yes sir! We'll be sure to put this to good use so you can put it to good use later.";
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                             this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         else if (budgetPercent <= 100 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed *= 0.1;
+                            this.vibeSpeed = 20;
                             newText = "I... Thank you, sir. We'll be extra careful not to get scammed this year.";
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
@@ -168,8 +178,17 @@ class Finance extends Phaser.Scene {
                         }
                     }
                     this.startTypewriterEffect(newText);
-                    console.log(this.ScoreMatrix);
-                    console.log(this.ScoreMatrix.getTurnBudget());
+                    let checkTyping = this.time.addEvent({
+                        delay: 50,
+                        loop: true,
+                        callback: () => {
+                            if (!this.typing) {
+                                this.clicked = false;
+                                locked = false;
+                                checkTyping.remove();
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -205,6 +224,13 @@ class Finance extends Phaser.Scene {
             backgroundColor: '#DDDDDD',
             padding: { x: 10, y: 5 }
         }).setInteractive();
+
+        backButton.on('pointerover', () => {
+            backButton.setBackgroundColor('#AAAAAA');
+        });
+        backButton.on('pointerout', () => {
+            backButton.setBackgroundColor('#DDDDDD');
+        });
 
         backButton.on('pointerdown', () => {
             this.scene.start('playScene');

@@ -129,52 +129,71 @@ class Defense extends Phaser.Scene {
                     totalPercent += budgetPercent;
                     // Validate input
                     if (budgetPercent > 100 || budgetPercent > this.ScoreMatrix.getTurnBudgetPercent() || totalPercent > 100) {
+                        this.vibeSpeed = 50;
                         this.ScoreMatrix.subtTurnBudget(prevPercent);
                         newText = "Our men cannot live on bread alone, but studies show that they still need the bread. That means we need to pay them with real money, and not IOUs. Try again.";
                         this.startTypewriterEffect(newText);
-                        this.clicked = false;
-                        locked = false;
+                        let checkTyping = this.time.addEvent({
+                            delay: 50,
+                            loop: true,
+                            callback: () => {
+                                if (!this.typing) {
+                                    this.clicked = false;
+                                    locked = false;
+                                    checkTyping.remove();
+                                }
+                            }
+                        });
                         return;
                     }
                     if (this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
                         if (budgetPercent <= 10 && this.ScoreMatrix.getTurnBudget() > this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
                             newText = "We're doomed.";
-                            this.vibeSpeed *= 1.2;
+                            this.vibeSpeed = 60;
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(2, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                             this.ScoreMatrix.updateMatrix(2, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         else if (budgetPercent <= 30 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed *= 1;
+                            this.vibeSpeed = 50;
                             newText = "Sir, I must urge you - reconsider! It doesn't matter how popular or rich you are if we're dead!";
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(2, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                             this.ScoreMatrix.updateMatrix(2, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         else if (budgetPercent <= 70 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed *= 0.8;
+                            this.vibeSpeed = 40;
                             newText = "Alright. It'll be a stretch, but we can make it work, sir.";
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(2, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                             this.ScoreMatrix.updateMatrix(2, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         else if (budgetPercent <= 90 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed *= 0.6;
+                            this.vibeSpeed = 30;
                             newText = "Excellent, sir! I assure you we will keep you extra safe with this much to work with.";
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(2, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                             this.ScoreMatrix.updateMatrix(2, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         else if (budgetPercent <= 100 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed *= 0.1;
+                            this.vibeSpeed = 10;
                             newText = "Thank you, sir! I promise you this much money will keep us all safe.\nFor now, anyway.";
                             this.ScoreMatrix.subtTurnBudget(budgetPercent);
                             this.ScoreMatrix.updateMatrix(2, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                             this.ScoreMatrix.updateMatrix(2, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
                         }
                         this.startTypewriterEffect(newText);
-                        console.log(this.ScoreMatrix);
-                        console.log(this.ScoreMatrix.getTurnBudget());
+                        let checkTyping = this.time.addEvent({
+                            delay: 50,
+                            loop: true,
+                            callback: () => {
+                                if (!this.typing) {
+                                    this.clicked = false;
+                                    locked = false;
+                                    checkTyping.remove();
+                                }
+                            }
+                        });
                     }
                 }
             }
@@ -212,6 +231,13 @@ class Defense extends Phaser.Scene {
             padding: { x: 10, y: 5 }
         }).setInteractive();
 
+        backButton.on('pointerover', () => {
+            backButton.setBackgroundColor('#AAAAAA');
+        });
+        backButton.on('pointerout', () => {
+            backButton.setBackgroundColor('#DDDDDD');
+        });
+        
         backButton.on('pointerdown', () => {
             this.scene.start('playScene');
         });
