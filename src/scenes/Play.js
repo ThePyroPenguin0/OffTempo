@@ -98,8 +98,9 @@ class Play extends Phaser.Scene {
 
         this.turnButton = this.add.image(game.config.width * 0.5, game.config.height * 0.95, "turnButton").setScale(1, 0.5).setInteractive();
         this.turnButton.on('pointerdown', () => {
-            if (this.ScoreMatrix.getTurnBudget() != 0) {
+            if (this.ScoreMatrix.getTurnBudget() > 1) { // Temporary fix to allow game progression
                 this.showPopup(`Not all money has been spent!\nThe turn will not end until all money has been allocated.\nCurrently, the budget is allocated as follows:\nConsumption: ${this.ScoreMatrix.getMatrixEntry(0, this.ScoreMatrix.getTurn() - 1, 1)}\nInvestment: ${this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn() - 1, 1)}\nDefense: ${this.ScoreMatrix.getMatrixEntry(2, this.ScoreMatrix.getTurn() - 1, 1)}\nOffense:${this.ScoreMatrix.getMatrixEntry(3, this.ScoreMatrix.getTurn() - 1, 1)}\n`);
+                console.log(`Turn budget remaining: $${this.ScoreMatrix.getTurnBudget()}`);
             } else {
                 this.scene.start("turnScene");
             }
@@ -168,33 +169,63 @@ class Play extends Phaser.Scene {
     }
 
     update(time, delta) {
-        this.bob++;
-        this.bobUpdate(time);
+        this.bobUpdate(time, delta);
+
+        const defenseSpeed = 500;
+        const offenseSpeed = 400;
+        const financeSpeed = 300;
+        const consumptionSpeed = 400;
+
+        if (!this.defense.moveElapsed) this.defense.moveElapsed = 0;
+        if (!this.offense.moveElapsed) this.offense.moveElapsed = 0;
+        if (!this.finance.moveElapsed) this.finance.moveElapsed = 0;
+        if (!this.consumption.moveElapsed) this.consumption.moveElapsed = 0;
+
+        const moveStepMs = 16;
+        const defenseStep = defenseSpeed * (moveStepMs / 1000);
+        const offenseStep = offenseSpeed * (moveStepMs / 1000);
+        const financeStep = financeSpeed * (moveStepMs / 1000);
+        const consumptionStep = consumptionSpeed * (moveStepMs / 1000);
 
         if (this.defense.locked) {
-            this.defense.x -= 7;
+            this.defense.moveElapsed += delta;
+            while (this.defense.moveElapsed >= moveStepMs) {
+                this.defense.x -= defenseStep;
+                this.defense.moveElapsed -= moveStepMs;
+            }
             this.defense.y = this.game.config.height * 0.7;
             if (this.defense.x < -200) {
                 this.scene.start("defenseScene");
             }
-
         }
         if (this.offense.locked) {
-            this.offense.x -= 5;
+            this.offense.moveElapsed += delta;
+            while (this.offense.moveElapsed >= moveStepMs) {
+                this.offense.x -= offenseStep;
+                this.offense.moveElapsed -= moveStepMs;
+            }
             this.offense.y = this.game.config.height * 0.7;
             if (this.offense.x < -200) {
                 this.scene.start("offenseScene");
             }
         }
         if (this.finance.locked) {
-            this.finance.x += 3;
+            this.finance.moveElapsed += delta;
+            while (this.finance.moveElapsed >= moveStepMs) {
+                this.finance.x += financeStep;
+                this.finance.moveElapsed -= moveStepMs;
+            }
             this.finance.y = this.game.config.height * 0.7;
             if (this.finance.x > config.width + 200) {
                 this.scene.start("financeScene");
             }
         }
         if (this.consumption.locked) {
-            this.consumption.x += 5;
+            this.consumption.moveElapsed += delta;
+            while (this.consumption.moveElapsed >= moveStepMs) {
+                this.consumption.x += consumptionStep;
+                this.consumption.moveElapsed -= moveStepMs;
+            }
             this.consumption.y = this.game.config.height * 0.7;
             if (this.consumption.x > config.width + 200) {
                 this.scene.start("consumptionScene");
@@ -202,49 +233,28 @@ class Play extends Phaser.Scene {
         }
     }
 
-    bobUpdate(time) {
-        if (!this.lastDefenseBob || time - this.lastDefenseBob >= 500) {
-            this.lastDefenseBob = time;
-            if (!this.defense.down && !this.defense.locked) {
-                this.defense.y += 25;
-                this.defense.down = true;
-            } else if (this.defense.down) {
-                this.defense.y -= 25;
-                this.defense.down = false;
-            }
+    bobUpdate(time, delta) {
+        const defenseInterval = 500;
+        const offenseInterval = 575;
+        const financeInterval = 900;
+        const consumptionInterval = 750;
+        const bobAmount = 10;
+
+        function discreteBob(baseY, time, interval, amount) {
+            return baseY + (Math.floor(time / interval) % 2 === 0 ? amount : -amount);
         }
 
-        if (!this.lastOffenseBob || time - this.lastOffenseBob >= 575) {
-            this.lastOffenseBob = time;
-            if (!this.offense.down && !this.offense.locked) {
-                this.offense.y += 25;
-                this.offense.down = true;
-            } else if (this.offense.down) {
-                this.offense.y -= 25;
-                this.offense.down = false;
-            }
+        if (!this.defense.locked) {
+            this.defense.y = discreteBob(this.game.config.height * 0.6, time, defenseInterval, bobAmount);
         }
-
-        if (!this.lastFinanceBob || time - this.lastFinanceBob >= 900) {
-            this.lastFinanceBob = time;
-            if (!this.finance.down && !this.finance.locked) {
-                this.finance.y += 25;
-                this.finance.down = true;
-            } else if (this.finance.down) {
-                this.finance.y -= 25;
-                this.finance.down = false;
-            }
+        if (!this.offense.locked) {
+            this.offense.y = discreteBob(this.game.config.height * 0.7, time, offenseInterval, bobAmount);
         }
-
-        if (!this.lastConsumptionBob || time - this.lastConsumptionBob >= 750) {
-            this.lastConsumptionBob = time;
-            if (!this.consumption.down && !this.consumption.locked) {
-                this.consumption.y += 25;
-                this.consumption.down = true;
-            } else if (this.consumption.down) {
-                this.consumption.y -= 25;
-                this.consumption.down = false;
-            }
+        if (!this.finance.locked) {
+            this.finance.y = discreteBob(this.game.config.height * 0.65, time, financeInterval, bobAmount);
+        }
+        if (!this.consumption.locked) {
+            this.consumption.y = discreteBob(this.game.config.height * 0.7, time, consumptionInterval, bobAmount);
         }
     }
 

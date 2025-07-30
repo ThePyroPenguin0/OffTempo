@@ -55,7 +55,9 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
     }
 
     getBudgetAbsolute(percent) {
-        return Math.round(((percent / 100) * this.budget) * 10) / 10;
+        // return Math.round(((percent / 100) * this.budget) * 10) / 10;
+        return (percent / 100) * this.budget;
+
     }
 
     getTurnBudgetPercent() {

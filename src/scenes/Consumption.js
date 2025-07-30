@@ -57,7 +57,6 @@ class Consumption extends Phaser.Scene {
         });
 
 
-        // Minister's Speech Bubble
         let bubbleWidth = 600;
         let bubbleHeight = 200;
         let bubbleX = this.minister.x + 200;
@@ -84,7 +83,6 @@ class Consumption extends Phaser.Scene {
 
         this.dialogText.setVisible(false);
 
-        // Number Input Box
         let inputBoxWidth = dialogWidth - 30;
         let inputBoxHeight = 40;
         let inputBoxX = dialogX + 15;
@@ -109,20 +107,19 @@ class Consumption extends Phaser.Scene {
                     inputText.setText(inputText.text.slice(0, -1));
                 }
                 if (event.key === 'Enter' && !this.typing) {
-
                     this.clicked = true;
                     locked = true;
                     bubbleGraphics.visible = true;
                     this.dialogText.setVisible(true);
-                    let newText = "";
+                    let newText = ``;
                     let budgetPercent = parseInt(inputText.text.replace(/[|%]/g, ''), 10);
-
                     let prevPercent = this.ScoreMatrix.getMatrixEntry(0, this.ScoreMatrix.getTurn() - 1, 1);
                     if (prevPercent) {
                         this.ScoreMatrix.restoreTurnBudget(prevPercent);
                     }
-                    // Validate input
-                    if (budgetPercent > 100 || budgetPercent > Math.round(this.ScoreMatrix.getTurnBudgetPercent())) {
+                    let absToSpend = this.ScoreMatrix.getBudgetAbsolute(budgetPercent);
+
+                    if (budgetPercent > 100 || budgetPercent > this.ScoreMatrix.getTurnBudgetPercent()) {
                         this.vibeSpeed = 50;
                         this.ScoreMatrix.subtTurnBudget(prevPercent);
                         newText = "Between you and me, I think this is fine. The public, however, really doesn't like deficits. Try again.";
@@ -141,57 +138,69 @@ class Consumption extends Phaser.Scene {
                         return;
                     }
 
-
-                    let absToSpend = this.ScoreMatrix.getBudgetAbsolute(budgetPercent);
-                    let remaining = this.ScoreMatrix.getTurnBudget();
-                    if (remaining + 0.2 >= absToSpend) {
-                        if (budgetPercent <= 10 && this.ScoreMatrix.getTurnBudget() > this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            newText = "Surely this is a mistake? A typographical error?!";
-                            this.vibeSpeed = 60;
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                            this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
-                        else if (budgetPercent <= 30 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed = 50;
-                            newText = "Prime Minister, the public will notice how much you spent on them - and how much you didn't!";
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                            this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
-                        else if (budgetPercent <= 70 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed = 40;
-                            newText = "That'll definitely get the media's attention and boost your popularity!";
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                            this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
-                        else if (budgetPercent <= 90 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed = 30;
-                            newText = `I can see it now - "Hero of the Common Man!" with a big and flattering picture of you on the front page. Good choice!`;
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                            this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
-                        else if (budgetPercent <= 100 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed = 20;
-                            newText = "I don't even know what to do with so much- actually, nevermind, I'll think of something. Thank you, Prime Minister!";
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                        }
-                        this.startTypewriterEffect(newText);
-                        let checkTyping = this.time.addEvent({
-                            delay: 50,
-                            loop: true,
-                            callback: () => {
-                                if (!this.typing) {
-                                    this.clicked = false;
-                                    locked = false;
-                                    checkTyping.remove();
-                                }
-                            }
-                        });
+                    if (this.ScoreMatrix.getBudgetAbsolute(budgetPercent) > this.ScoreMatrix.getTurnBudget()) {
+                        absToSpend = Math.floor(this.ScoreMatrix.getTurnBudget());
+                        console.warn(`Requested allocation exceeds remaining budget. Allocating the maximum possible ($${absToSpend}) instead.`);
                     }
+
+                    if (budgetPercent <= 10) {
+                        newText = `Surely this is a mistake? A typographical error?!`;
+                        this.vibeSpeed = 60;
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, absToSpend);
+                        this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else if (budgetPercent <= 30) {
+                        this.vibeSpeed = 50;
+                        newText = `Prime Minister, the public will notice how much you spent on them - and how much you didn't!`;
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, absToSpend);
+                        this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else if (budgetPercent <= 70) {
+                        this.vibeSpeed = 40;
+                        newText = `That'll definitely get the media's attention and boost your popularity!`;
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, absToSpend);
+                        this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else if (budgetPercent <= 90) {
+                        this.vibeSpeed = 30;
+                        newText = `I can see it now - "Hero of the Common Man!" with a big and flattering picture of you on the front page. Good choice!`;
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, absToSpend);
+                        this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else if (budgetPercent <= 100) {
+                        this.vibeSpeed = 20;
+                        newText = "I don't even know what to do with so much- actually, nevermind, I'll think of something. Thank you, Prime Minister!";
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 0, absToSpend);
+                        this.ScoreMatrix.updateMatrix(0, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else {
+                        this.clicked = false;
+                        locked = false;
+                    }
+                    if (!newText) {
+                        newText = ("You probably tried to spend more thn 100% but less than 101% of budget.");
+                        console.log("Budget Percent: " + budgetPercent);
+                        console.log("Turn Budget Percent: " + this.ScoreMatrix.getTurnBudgetPercent());
+                        console.log("Turn Budget: $" + this.ScoreMatrix.getTurnBudget());
+                        console.log("Attempting to spend: $" + this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
+                    }
+                    this.startTypewriterEffect(newText);
+                    let checkTyping = this.time.addEvent({
+                        delay: 50,
+                        loop: true,
+                        callback: () => {
+                            if (!this.typing) {
+                                this.clicked = false;
+                                locked = false;
+                                checkTyping.remove();
+                            }
+                        }
+                    });
                 }
             }
         });
@@ -239,9 +248,16 @@ class Consumption extends Phaser.Scene {
         });
     }
 
-    update() {
-        this.frames++;
-        this.vibeCheck(this.frames, this.vibeSpeed);
+
+    update(time, delta) {
+        // Discrete bobbing, interval depends on budgetPercent
+        if (!this.ministerBaseY) this.ministerBaseY = this.minister.y;
+        let budgetPercent = this.ScoreMatrix.getMatrixEntry(0, this.ScoreMatrix.getTurn() - 1, 1) || 0;
+        const minInterval = 200, maxInterval = 1200;
+        let interval = maxInterval - ((maxInterval - minInterval) * (budgetPercent / 100));
+        const bobAmount = 10;
+        if (typeof time === "undefined") return;
+        this.minister.y = this.ministerBaseY + ((Math.floor(time / interval) % 2 === 0) ? bobAmount : -bobAmount);
     }
 
     startTypewriterEffect(text) {
@@ -265,14 +281,4 @@ class Consumption extends Phaser.Scene {
         });
     }
 
-    vibeCheck(frames, rate) {
-        if (frames % rate == 0 && !this.minDown) {
-            this.minister.y += 30;
-            this.minDown = true;
-        }
-        else if (frames % rate == 0 && this.minDown) {
-            this.minister.y -= 30;
-            this.minDown = false;
-        }
-    }
 }

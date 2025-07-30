@@ -58,7 +58,6 @@ class Offense extends Phaser.Scene {
         });
 
 
-        // Minister's Speech Bubble
         let bubbleWidth = 600;
         let bubbleHeight = 200;
         let bubbleX = this.minister.x + 200;
@@ -85,7 +84,6 @@ class Offense extends Phaser.Scene {
 
         this.dialogText.setVisible(false);
 
-        // Number Input Box
         let inputBoxWidth = dialogWidth - 30;
         let inputBoxHeight = 40;
         let inputBoxX = dialogX + 15;
@@ -120,7 +118,8 @@ class Offense extends Phaser.Scene {
                     if (prevPercent) {
                         this.ScoreMatrix.restoreTurnBudget(prevPercent);
                     }
-                    // Validate input
+                    let absToSpend = this.ScoreMatrix.getBudgetAbsolute(budgetPercent);
+
                     if (budgetPercent > 100 || budgetPercent > this.ScoreMatrix.getTurnBudgetPercent()) {
                         this.vibeSpeed = 50;
                         this.ScoreMatrix.subtTurnBudget(prevPercent);
@@ -139,61 +138,70 @@ class Offense extends Phaser.Scene {
                         });
                         return;
                     }
-                    let absToSpend = this.ScoreMatrix.getBudgetAbsolute(budgetPercent);
-                    let remaining = this.ScoreMatrix.getTurnBudget();
-                    if (remaining + 0.2 >= absToSpend) {
-                        if (budgetPercent <= 10 && this.ScoreMatrix.getTurnBudget() > this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            newText = `What's the matter with you? Don't you take me seriously?!`;
-                            this.vibeSpeed = 60;
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent) / 2);
-                            this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
-                        else if (budgetPercent <= 30 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed = 50;
-                            newText = `Well, if you're already spending on offensive capabilities, why not spend a little more?`;
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent) / 2);
-                            this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
-                        else if (budgetPercent <= 70 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed = 40;
-                            newText = `Great! That might not be enough to atomize our enemies, but it'll certainly hurt.`;
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent) / 2);
-                            this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
-                        else if (budgetPercent <= 90 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed = 30;
-                            newText = `Sir, if you're preparing to launch a war, why not go all in?`;
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent) / 2);
-                            this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
-                        else if (budgetPercent <= 100 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed = 20;
-                            newText = `KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! I knew you were our guy.`;
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent) / 2);
-                            this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
-                        else {
-                            this.clicked = false;
-                            locked = false;
-                        }
-                        this.startTypewriterEffect(newText);
-                        let checkTyping = this.time.addEvent({
-                            delay: 50,
-                            loop: true,
-                            callback: () => {
-                                if (!this.typing) {
-                                    this.clicked = false;
-                                    locked = false;
-                                    checkTyping.remove();
-                                }
-                            }
-                        });
+                    if (this.ScoreMatrix.getBudgetAbsolute(budgetPercent) > this.ScoreMatrix.getTurnBudget()) {
+                        absToSpend = Math.floor(this.ScoreMatrix.getTurnBudget());
+                        console.warn(`Requested allocation exceeds remaining budget. Allocating the maximum possible ($${absToSpend}) instead.`);
                     }
+
+                    if (budgetPercent <= 10) {
+                        newText = `What's the matter with you? Don't you take me seriously?!`;
+                        this.vibeSpeed = 60;
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 0, absToSpend / 2);
+                        this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else if (budgetPercent <= 30) {
+                        this.vibeSpeed = 50;
+                        newText = `Well, if you're already spending on offensive capabilities, why not spend a little more?`;
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 0, absToSpend / 2);
+                        this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else if (budgetPercent <= 70) {
+                        this.vibeSpeed = 40;
+                        newText = `Great! That might not be enough to atomize our enemies, but it'll certainly hurt.`;
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 0, absToSpend / 2);
+                        this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else if (budgetPercent <= 90) {
+                        this.vibeSpeed = 30;
+                        newText = `Sir, if you're preparing to launch a war, why not go all in?`;
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 0, absToSpend / 2);
+                        this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else if (budgetPercent <= 100) {
+                        this.vibeSpeed = 20;
+                        newText = `KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! KILL! I knew you were our guy.`;
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 0, absToSpend / 2);
+                        this.ScoreMatrix.updateMatrix(3, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else {
+                        this.clicked = false;
+                        locked = false;
+                    }
+                    if (!newText) {
+                        newText = ("You probably tried to spend more thn 100% but less than 101% of budget.");
+                        console.log("Budget Percent: " + budgetPercent);
+                        console.log("Turn Budget Percent: " + this.ScoreMatrix.getTurnBudgetPercent());
+                        console.log("Turn Budget: $" + this.ScoreMatrix.getTurnBudget());
+                        console.log("Attempting to spend: $" + this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
+                    }
+                    this.startTypewriterEffect(newText);
+                    let checkTyping = this.time.addEvent({
+                        delay: 50,
+                        loop: true,
+                        callback: () => {
+                            if (!this.typing) {
+                                this.clicked = false;
+                                locked = false;
+                                checkTyping.remove();
+                            }
+                        }
+                    });
+
                 }
             }
         });
@@ -242,9 +250,16 @@ class Offense extends Phaser.Scene {
         });
     }
 
-    update() {
-        this.frames++;
-        this.vibeCheck(this.frames, this.vibeSpeed);
+
+    update(time, delta) {
+        // Discrete bobbing, interval depends on budgetPercent
+        if (!this.ministerBaseY) this.ministerBaseY = this.minister.y;
+        let budgetPercent = this.ScoreMatrix.getMatrixEntry(3, this.ScoreMatrix.getTurn() - 1, 1) || 0;
+        const minInterval = 100, maxInterval = 1200;
+        let interval = maxInterval - ((maxInterval - minInterval) * (budgetPercent / 100));
+        const bobAmount = 10;
+        if (typeof time === "undefined") return;
+        this.minister.y = this.ministerBaseY + ((Math.floor(time / interval) % 2 === 0) ? bobAmount : -bobAmount);
     }
 
     startTypewriterEffect(text) {
@@ -261,16 +276,5 @@ class Offense extends Phaser.Scene {
                 this.typingIndex++;
             }
         });
-    }
-
-    vibeCheck(frames, rate) {
-        if (frames % rate == 0 && !this.minDown) {
-            this.minister.y += 30;
-            this.minDown = true;
-        }
-        else if (frames % rate == 0 && this.minDown) {
-            this.minister.y -= 30;
-            this.minDown = false;
-        }
     }
 }

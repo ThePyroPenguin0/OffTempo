@@ -58,7 +58,6 @@ class Finance extends Phaser.Scene {
         });
 
 
-        // Minister's Speech Bubble
         let bubbleWidth = 600;
         let bubbleHeight = 200;
         let bubbleX = this.minister.x + 200;
@@ -85,7 +84,6 @@ class Finance extends Phaser.Scene {
 
         this.dialogText.setVisible(false);
 
-        // Number Input Box
         let inputBoxWidth = dialogWidth - 30;
         let inputBoxHeight = 40;
         let inputBoxX = dialogX + 15;
@@ -115,13 +113,13 @@ class Finance extends Phaser.Scene {
                     locked = true;
                     bubbleGraphics.visible = true;
                     this.dialogText.setVisible(true);
-                    let newText = "";
+                    let newText = ``;
                     let budgetPercent = parseInt(inputText.text.replace(/[|%]/g, ''), 10);
                     let prevPercent = this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn() - 1, 1);
                     if (prevPercent) {
                         this.ScoreMatrix.restoreTurnBudget(prevPercent);
                     }
-                    // Validate input
+                    let absToSpend = this.ScoreMatrix.getBudgetAbsolute(budgetPercent);
                     if (budgetPercent > 100 || budgetPercent > this.ScoreMatrix.getTurnBudgetPercent()) {
                         this.vibeSpeed = 50;
                         this.ScoreMatrix.subtTurnBudget(prevPercent);
@@ -140,44 +138,57 @@ class Finance extends Phaser.Scene {
                         });
                         return;
                     }
-                    let absToSpend = this.ScoreMatrix.getBudgetAbsolute(budgetPercent);
-                    let remaining = this.ScoreMatrix.getTurnBudget();
-                    if (remaining + 0.2 >= absToSpend) {
-                        if (budgetPercent <= 10 && this.ScoreMatrix.getTurnBudget() > this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            newText = "Respectfully... sir... how do you expect to buy anything else when you have so little money to buy with?";
-                            this.vibeSpeed = 60;
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
-                        else if (budgetPercent <= 30 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed = 50;
-                            newText = "Are you sure, sir? Do try not to forget about the importance of a healthy economy...";
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
-                        else if (budgetPercent <= 70 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed = 40;
-                            newText = "Ah, yes. A perfectly... acceptable sum.";
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
-                        else if (budgetPercent <= 90 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed = 30;
-                            newText = "Oh, yes sir! We'll be sure to put this to good use so you can put it to good use later.";
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
-                        else if (budgetPercent <= 100 && this.ScoreMatrix.getTurnBudget() >= this.ScoreMatrix.getBudgetAbsolute(budgetPercent)) {
-                            this.vibeSpeed = 20;
-                            newText = "I... Thank you, sir. We'll be extra careful not to get scammed this year.";
-                            this.ScoreMatrix.subtTurnBudget(budgetPercent);
-                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
-                            this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
-                        }
+
+                    if (this.ScoreMatrix.getBudgetAbsolute(budgetPercent) > this.ScoreMatrix.getTurnBudget()) {
+                        absToSpend = Math.floor(this.ScoreMatrix.getTurnBudget());
+                        console.warn(`Requested allocation exceeds remaining budget. Allocating the maximum possible ($${absToSpend}) instead.`);
+                    }
+
+                    if (budgetPercent <= 10) {
+                        this.vibeSpeed = 60;
+                        newText = "Respectfully... sir... how do you expect to buy anything else when you have so little money to buy with?";
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, absToSpend);
+                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else if (budgetPercent <= 30) {
+                        this.vibeSpeed = 50;
+                        newText = "Are you sure, sir? Do try not to forget about the importance of a healthy economy...";
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, absToSpend);
+                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else if (budgetPercent <= 70) {
+                        this.vibeSpeed = 40;
+                        newText = "Ah, yes. A perfectly... acceptable sum.";
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, absToSpend);
+                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else if (budgetPercent <= 90) {
+                        this.vibeSpeed = 30;
+                        newText = "Oh, yes sir! We'll be sure to put this to good use so you can put it to good use later.";
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, absToSpend);
+                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else if (budgetPercent <= 100) {
+                        this.vibeSpeed = 20;
+                        newText = "I... Thank you, sir. We'll be extra careful not to get scammed this year.";
+                        this.ScoreMatrix.subtTurnBudget(budgetPercent);
+                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 0, absToSpend);
+                        this.ScoreMatrix.updateMatrix(1, this.ScoreMatrix.getTurn() - 1, 1, budgetPercent);
+                    }
+                    else {
+                        this.clicked = false;
+                        locked = false;
+                    }
+                    if (!newText) {
+                        newText = ("You probably tried to spend more thn 100% but less than 101% of budget.");
+                        console.log("Budget Percent: " + budgetPercent);
+                        console.log("Turn Budget Percent: " + this.ScoreMatrix.getTurnBudgetPercent());
+                        console.log("Turn Budget: $" + this.ScoreMatrix.getTurnBudget());
+                        console.log("Attempting to spend: $" + this.ScoreMatrix.getBudgetAbsolute(budgetPercent));
                     }
                     this.startTypewriterEffect(newText);
                     let checkTyping = this.time.addEvent({
@@ -239,9 +250,18 @@ class Finance extends Phaser.Scene {
         });
     }
 
-    update() {
-        this.frames++;
-        this.vibeCheck(this.frames, this.vibeSpeed);
+
+    update(time, delta) {
+        // Discrete bobbing, interval depends on budgetPercent
+        if (!this.ministerBaseY) this.ministerBaseY = this.minister.y;
+        let budgetPercent = this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn() - 1, 1) || 0;
+        // Map budgetPercent (0-100) to interval (slowest 1200ms, fastest 300ms)
+        const minInterval = 400, maxInterval = 1200;
+        let interval = maxInterval - ((maxInterval - minInterval) * (budgetPercent / 100));
+        // Bobbing amplitude
+        const bobAmount = 10;
+        if (typeof time === "undefined") return;
+        this.minister.y = this.ministerBaseY + ((Math.floor(time / interval) % 2 === 0) ? bobAmount : -bobAmount);
     }
 
     startTypewriterEffect(text) {
@@ -266,14 +286,4 @@ class Finance extends Phaser.Scene {
 
     }
 
-    vibeCheck(frames, rate) {
-        if (frames % rate == 0 && !this.minDown) {
-            this.minister.y += 30;
-            this.minDown = true;
-        }
-        else if (frames % rate == 0 && this.minDown) {
-            this.minister.y -= 30;
-            this.minDown = false;
-        }
-    }
 }
