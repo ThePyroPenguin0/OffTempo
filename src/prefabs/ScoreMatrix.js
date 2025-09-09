@@ -202,7 +202,7 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
         // Header: For budget, only absolute column
         let header = ['Turn'];
         for (let i = 0; i < 4; i++) {
-            header.push(`Absolute amount spent on ${resourceNames[i]}`, `Percentage of turn budget spent on ${resourceNames[i]}`);
+            header.push(`${resourceNames[i]} spending (absolute)`, `${resourceNames[i]} spending (percentage of turn budget)`);
         }
         header.push('Turn budget');
         let lines = [header.join(',')];
