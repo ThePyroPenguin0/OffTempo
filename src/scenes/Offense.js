@@ -242,6 +242,17 @@ class Offense extends Phaser.Scene {
                 let newText = this.dialogOptions[this.ScoreMatrix.getTurn() - 1];
                 this.startTypewriterEffect(newText);
                 this.clicked = true;
+                // Reset clicked after typewriter effect finishes
+                let checkTyping = this.time.addEvent({
+                    delay: 50,
+                    loop: true,
+                    callback: () => {
+                        if (!this.typing) {
+                            this.clicked = false;
+                            checkTyping.remove();
+                        }
+                    }
+                });
             }
         });
 
@@ -282,15 +293,20 @@ class Offense extends Phaser.Scene {
     startTypewriterEffect(text) {
         this.currentText = text;
         this.typingIndex = 0;
-        this.dialogText.setText(``);
+        this.dialogText.setText("");
         this.typing = true;
 
         this.time.addEvent({
             delay: 50,
             repeat: text.length - 1,
             callback: () => {
-                this.dialogText.setText(this.dialogText.text + text[this.typingIndex]);
-                this.typingIndex++;
+                if (this.typingIndex < text.length) {
+                    this.dialogText.setText(this.dialogText.text + text[this.typingIndex]);
+                    this.typingIndex++;
+                }
+                if (this.typingIndex >= text.length) {
+                    this.typing = false;
+                }
             }
         });
     }
