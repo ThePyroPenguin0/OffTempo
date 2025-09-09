@@ -33,7 +33,21 @@ class Offense extends Phaser.Scene {
 
 
         this.add.image(0, 0, 'gradientBG').setOrigin(0, 0);
-        this.minister = this.add.image(config.width * 0.25, config.height * 0.6, 'jingo').setScale(1.5).setInteractive();
+        this.minister = this.add.image(config.width * 0.25, config.height * 0.6, 'jingo').setScale(1.5).setInteractive({ pixelPerfect: true });
+        this.minister.on('pointerover', () => {
+            if (!this.clicked) {
+                this.minister.setTint(0xdddddd);
+                this.sound.play('pop');
+            }
+        });
+        this.minister.on('pointerout', () => {
+            this.minister.clearTint();
+        });
+        this.minister.on('pointerdown', () => {
+            if (!this.clicked) {
+                this.sound.play('click');
+            }
+        });
         this.frames = 0;
         this.minDown = false;
 
@@ -240,12 +254,14 @@ class Offense extends Phaser.Scene {
 
         backButton.on('pointerover', () => {
             backButton.setBackgroundColor('#AAAAAA');
+            this.sound.play('pop');
         });
         backButton.on('pointerout', () => {
             backButton.setBackgroundColor('#DDDDDD');
         });
 
         backButton.on('pointerdown', () => {
+            this.sound.play('click');
             this.scene.start('playScene');
         });
     }

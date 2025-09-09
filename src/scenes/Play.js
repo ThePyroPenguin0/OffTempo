@@ -23,6 +23,7 @@ class Play extends Phaser.Scene {
         });
         this.offense.on('pointerover', () => {
             this.offense.setTint(0xdddddd);
+            this.sound.play('pop');
         });
 
         this.defense.setInteractive({
@@ -30,6 +31,7 @@ class Play extends Phaser.Scene {
         });
         this.defense.on('pointerover', () => {
             this.defense.setTint(0xdddddd);
+            this.sound.play('pop');
         });
 
         this.finance.setInteractive({
@@ -37,6 +39,7 @@ class Play extends Phaser.Scene {
         });
         this.finance.on('pointerover', () => {
             this.finance.setTint(0xdddddd);
+            this.sound.play('pop');
         });
 
         this.consumption.setInteractive({
@@ -44,6 +47,7 @@ class Play extends Phaser.Scene {
         });
         this.consumption.on('pointerover', () => {
             this.consumption.setTint(0xdddddd);
+            this.sound.play('pop');
         });
 
         this.offense.on('pointerout', () => {
@@ -66,18 +70,22 @@ class Play extends Phaser.Scene {
 
         this.offense.on('pointerdown', () => {
             this.offense.locked = true;
+            this.sound.play('click');
         });
 
         this.defense.on('pointerdown', () => {
             this.defense.locked = true;
+            this.sound.play('click');
         });
 
         this.finance.on('pointerdown', () => {
             this.finance.locked = true;
+            this.sound.play('click');
         });
 
         this.consumption.on('pointerdown', () => {
             this.consumption.locked = true;
+            this.sound.play('click');
         });
 
         this.add.text(config.width * 0.8, config.height * 0.1, "Turn: " + this.ScoreMatrix.getTurn(), {
@@ -98,6 +106,7 @@ class Play extends Phaser.Scene {
 
         this.turnButton = this.add.image(game.config.width * 0.5, game.config.height * 0.95, "turnButton").setScale(1, 0.5).setInteractive();
         this.turnButton.on('pointerdown', () => {
+            this.sound.play('click');
             if (this.ScoreMatrix.getTurnBudget() > 1) { // Temporary fix to allow game progression
                 this.showPopup(`Not all money has been spent!\nThe turn will not end until all money has been allocated.\nCurrently, the budget is allocated as follows:\nConsumption: ${this.ScoreMatrix.getMatrixEntry(0, this.ScoreMatrix.getTurn() - 1, 1)}\nInvestment: ${this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn() - 1, 1)}\nDefense: ${this.ScoreMatrix.getMatrixEntry(2, this.ScoreMatrix.getTurn() - 1, 1)}\nOffense:${this.ScoreMatrix.getMatrixEntry(3, this.ScoreMatrix.getTurn() - 1, 1)}\n`);
                 console.log(`Turn budget remaining: $${this.ScoreMatrix.getTurnBudget()}`);
@@ -107,18 +116,22 @@ class Play extends Phaser.Scene {
         });
 
         this.turnButton.on('pointerover', () => {
+            this.sound.play('pop');
             this.turnButton.setTint(0xdddddd);
         });
         this.turnButton.on('pointerout', () => {
+            this.sound.play('pop');
             this.turnButton.clearTint();
         });
 
         this.warButton = this.add.image(game.config.width * 0.7, game.config.height * 0.95, "warButton").setScale(1, 0.5).setInteractive();
         this.warButton.on('pointerdown', () => {
+            this.sound.play('click');
             this.scene.start("warScene");
         });
 
         this.warButton.on('pointerover', () => {
+            this.sound.play('pop');
             this.warButton.setTint(0xdddddd);
         });
         this.warButton.on('pointerout', () => {
@@ -128,9 +141,11 @@ class Play extends Phaser.Scene {
         this.reportButton = this.add.image(game.config.width * 0.3, game.config.height * 0.95, "reportButton").setScale(1, 0.5).setInteractive();
         this.reportButton.on('pointerdown', () => {
             this.scene.start("reportScene");
+            this.sound.play('click');
         });
 
         this.reportButton.on('pointerover', () => {
+            this.sound.play('pop');
             this.reportButton.setTint(0xdddddd);
         });
         this.reportButton.on('pointerout', () => {
@@ -139,28 +154,32 @@ class Play extends Phaser.Scene {
 
         this.exitButton = this.add.image(game.config.width * 0.95, game.config.height * 0.075, "exitButton").setScale(0.5, 0.5).setInteractive();
         this.exitButton.on('pointerdown', () => {
+            this.sound.play('click');
             this.ScoreMatrix.resetMatrix();
             this.scene.start('menuScene');
         });
 
-    this.exitButton.on('pointerover', () => {
-        this.exitButton.setTint(0xdddddd);
-    });
-    this.exitButton.on('pointerout', () => {
-        this.exitButton.clearTint();
-    });
+        this.exitButton.on('pointerover', () => {
+            this.exitButton.setTint(0xdddddd);
+            this.sound.play('pop');
+        });
+        this.exitButton.on('pointerout', () => {
+            this.exitButton.clearTint();
+        });
 
         this.rulebook = this.add.image(game.config.width * 0.95, game.config.height * 0.15, "book").setScale(1).setInteractive();
         this.rulebook.on('pointerdown', () => {
-            this.scene.start('guideScene', {ingame: true});
+            this.sound.play('click');
+            this.scene.start('guideScene', { ingame: true });
         });
 
-    this.rulebook.on('pointerover', () => {
-        this.rulebook.setTint(0xdddddd);
-    });
-    this.rulebook.on('pointerout', () => {
-        this.rulebook.clearTint();
-    });
+        this.rulebook.on('pointerover', () => {
+            this.sound.play('pop');
+            this.rulebook.setTint(0xdddddd);
+        });
+        this.rulebook.on('pointerout', () => {
+            this.rulebook.clearTint();
+        });
 
         this.lastDefenseBob = 0;
         this.lastOffenseBob = 0;

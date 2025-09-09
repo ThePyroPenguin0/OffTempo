@@ -1,7 +1,8 @@
 class ScoreMatrix extends Phaser.Plugins.BasePlugin {
     constructor(pluginManager) {
         super(pluginManager);
-        this.matrix = Array.from({ length: 4 }, () =>
+        // Add a fifth resource for Budget
+        this.matrix = Array.from({ length: 5 }, () =>
             Array.from({ length: 10 }, () => [0, 0])
         );
         this.turn = 1;
@@ -12,7 +13,7 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
     }
 
     updateMatrix(resource, turn, bud, value) {
-        if (resource < 4 && turn < 10 && bud < 2) {
+        if (resource < 5 && turn < 10 && bud < 2) {
             // bud==0: absolute budget, round to two decimals; bud==1: percent, round to nearest whole
             if (bud === 0) {
                 this.matrix[resource][turn][bud] = Math.round(value * 100) / 100;
@@ -47,6 +48,8 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
         console.log(`Old budget: ${this.budget}`);
         this.budget += this.getMatrixEntry(1, turn - 1, 0);
         this.turnBudget = this.budget;
+        this.matrix[4][turn][0] = this.budget;
+        this.matrix[4][turn][1] = 0;
         console.log(`Updated budget: ${this.budget} (added ${this.getMatrixEntry(1, turn - 1, 0)})`)
     }
 
@@ -93,12 +96,14 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
     getTurnCode() {
         return this.turnCodes[this.turn - 1];
     }
-    
+
     displayMatrix(scene) {
+        this.updateMatrix(4, 0, 0, 100);
         const matrix = this.getMatrix();
-        const matrixWidth = 4;
+        const matrixWidth = 5; // Now 5 resources
         const matrixHeight = 10;
-        const startX = 400;
+        const totalMatrixWidth = matrixWidth * 150 + (matrixWidth - 1) * 2;
+        const startX = (scene.sys.game.config.width / 2) - (totalMatrixWidth / 2);
         const startY = 100;
         const entryWidth = 150;
         const entryHeight = 50;
@@ -106,8 +111,8 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
         const labelOffset = 125;
         const headerY = startY - 30;
 
-        const resourceNames = ['Consumption', 'Investment', 'Defense', 'Offense'];
-        let totals = [0, 0, 0, 0];
+        const resourceNames = ['Consumption', 'Investment', 'Defense', 'Offense', 'Turn Budget'];
+        let totals = [0, 0, 0, 0, 0];
 
         for (let row = 0; row < matrixWidth; row++) {
             const xPos = startX + row * (entryWidth + lineWidth);
@@ -133,7 +138,13 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
                 const xPos = startX + row * (entryWidth + lineWidth);
                 const yPos = startY + rowStart * (entryHeight + lineWidth);
                 const value = matrix[row][col];
-                const displayValue = `${value[0]}, (${value[1]}%)`;
+                let displayValue;
+                if (row === 4) {
+                    // Budget: only show absolute value
+                    displayValue = `$${value[0]}`;
+                } else {
+                    displayValue = `${value[0]}, (${value[1]}%)`;
+                }
                 totals[row] += value[0];
 
                 scene.add.graphics()
@@ -159,18 +170,25 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
         }
     }
 
+    setBudgetForTurn(turn) {
+        if (turn >= 0 && turn < 10) {
+            this.matrix[4][turn][0] = this.budget;
+            this.matrix[4][turn][1] = 0; // percent column not used for Budget
+        }
+    }
+
     consumptionUpdate() {
         this.consumptionThreshold += this.getMatrixEntry(0, this.getTurn() - 1, 0);
         console.log(`Running consumption total: ${this.consumptionThreshold}`)
         return this.consumptionThreshold;
     }
 
-    sumRow(resource) {    
+    sumRow(resource) {
         return this.matrix[resource].reduce((sum, entry) => sum + entry[0], 0);
     }
-    
+
     resetMatrix() {
-        this.matrix = Array.from({ length: 4 }, () =>
+        this.matrix = Array.from({ length: 5 }, () =>
             Array.from({ length: 10 }, () => [0, 0])
         );
         this.turn = 1;
@@ -178,7 +196,30 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
         this.turnBudget = this.budget;
         this.consumptionThreshold = 0;
     }
-    
+
+    getMatrixAsText() {
+        const resourceNames = ['Consumption', 'Investment', 'Defense', 'Offense', 'Budget'];
+        // Header: For budget, only absolute column
+        let header = ['Turn'];
+        for (let i = 0; i < 4; i++) {
+            header.push(`Absolute amount spent on ${resourceNames[i]}`, `Percentage of turn budget spent on ${resourceNames[i]}`);
+        }
+        header.push('Turn budget');
+        let lines = [header.join(',')];
+
+        for (let turn = 0; turn < 10; turn++) {
+            let row = [`${turn + 1}`];
+            for (let res = 0; res < 4; res++) {
+                row.push(this.matrix[res][turn][0]);
+                row.push(this.matrix[res][turn][1]);
+            }
+            // Only absolute value for Budget
+            row.push(this.matrix[4][turn][0]);
+            lines.push(row.join(','));
+        }
+        return lines.join('\n');
+    }
+
 }
 
 window.ScoreMatrix = ScoreMatrix;

@@ -32,7 +32,7 @@ class Consumption extends Phaser.Scene {
 
 
         this.add.image(0, 0, 'gradientBG').setOrigin(0, 0);
-        this.minister = this.add.image(config.width * 0.25, config.height * 0.6, 'deputy').setScale(1.5).setInteractive();
+        this.minister = this.add.image(config.width * 0.25, config.height * 0.6, 'deputy').setScale(1.5).setInteractive({ pixelPerfect: true });
         this.frames = 0;
         this.minDown = false;
 
@@ -72,14 +72,16 @@ class Consumption extends Phaser.Scene {
         );
         bubbleGraphics.setVisible(false);
 
-        this.dialogText = this.add.text(bubbleX + 20, bubbleY + 20, "You should not see this!", {
+        // Center the dialogText in the speech bubble
+        this.dialogText = this.add.text(0, 0, "You should not see this!", {
             fontFamily: 'Courier, monospace',
             fontSize: '28px',
             align: "center",
             color: '#000000',
-            wordWrap: { width: dialogWidth * 0.9 - 30 }
-
+            wordWrap: { width: bubbleWidth - 40 }
         });
+        this.dialogText.setOrigin(0.5, 0.5);
+        this.dialogText.setPosition(bubbleX + bubbleWidth / 2, bubbleY + bubbleHeight / 2);
 
         this.dialogText.setVisible(false);
 
@@ -223,6 +225,7 @@ class Consumption extends Phaser.Scene {
             bubbleGraphics.setVisible(true);
             this.dialogText.setVisible(true);
             if (!this.clicked) {
+                this.sound.play('click');
                 let newText = this.dialogOptions[this.ScoreMatrix.getTurn() - 1];
                 this.startTypewriterEffect(newText);
                 this.clicked = true;
@@ -239,12 +242,24 @@ class Consumption extends Phaser.Scene {
 
         backButton.on('pointerover', () => {
             backButton.setBackgroundColor('#AAAAAA');
+            this.sound.play('pop');
         });
         backButton.on('pointerout', () => {
             backButton.setBackgroundColor('#DDDDDD');
         });
         backButton.on('pointerdown', () => {
             this.scene.start('playScene');
+            this.sound.play('click');
+        });
+
+        this.minister.on('pointerover', () => {
+            if (!this.clicked) {
+                this.sound.play('pop');
+                this.minister.setTint(0xdddddd);
+            }
+        });
+        this.minister.on('pointerout', () => {
+            this.minister.clearTint();
         });
     }
 

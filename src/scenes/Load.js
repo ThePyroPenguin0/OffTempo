@@ -43,7 +43,9 @@ class Load extends Phaser.Scene {
         this.load.image("reportButton", "progress.png");
         this.load.image("exitButton", "exit.png");
         this.load.image("book", "book.png");
-        
+        this.load.audio("click", "click.mp3");
+        this.load.audio("pop", "pop.mp3");
+
         // Load audio
         this.load.path = "./assets/audio";
     }

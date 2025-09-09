@@ -10,12 +10,20 @@ class ViewMatrix extends Phaser.Scene {
         this.ScoreMatrix = this.plugins.get('ScoreMatrix');
         this.ScoreMatrix.displayMatrix(this);
 
-        this.add.text(config.width / 2, config.height * 0.9, "Press (ESCAPE) to resume the game.", {
-            fontSize: '24px',
-            fill: '#ffffff',
-            align: 'center',
-            padding: { x: 20, y: 20 }
-        }).setOrigin(0.5);
+        this.add.text(config.width / 2, config.height * 0.95, "Your team's moves so far are listed above, with each row representing one turn and each column representing its stated resource. The first part of an entry is the absolute quantity of that resource purchased on that turn, while the second part is the percentage of the turn's budget spent on that resource.").setOrigin(0.5, 1).setFontSize(22).setWordWrapWidth(config.width * 0.9).setAlign('center');
+        this.exitButton = this.add.image(game.config.width * 0.95, game.config.height * 0.075, "exitButton").setScale(0.5, 0.5).setInteractive({ useHandCursor: true });
+        this.exitButton.on('pointerdown', () => {
+            this.sound.play('click');
+            this.scene.start('playScene');
+        });
+
+        this.exitButton.on('pointerover', () => {
+            this.exitButton.setTint(0xdddddd);
+            this.sound.play('pop');
+        });
+        this.exitButton.on('pointerout', () => {
+            this.exitButton.clearTint();
+        });
         
         this.input.keyboard.on('keydown-ESC', () => {
             console.log(`Current stats:

@@ -42,7 +42,7 @@ class Menu extends Phaser.Scene {
         }
 
         this.add.text(game.config.width / 2, game.config.height / 3, "Off Tempo", titleText).setOrigin(0.5);
-        this.add.text(game.config.width / 2, game.config.height / 2, "A Resource Management Game for the Defense Resource Management Institute, Defense Security Cooperation Agency", subtitleText).setOrigin(0.5);
+        this.add.text(game.config.width / 2, game.config.height / 2, "A Resource Management Game for the Defense Resource Management Institute", subtitleText).setOrigin(0.5);
 
         // Create Start Game button
         const startButton = this.add.text(game.config.width * 0.25, game.config.height * 0.75, "Start Game", subtitleText)
@@ -50,12 +50,14 @@ class Menu extends Phaser.Scene {
             .setInteractive({ useHandCursor: true });
         startButton.on('pointerover', () => {
             startButton.setBackgroundColor('#AAAAAA');
+            this.sound.play('pop');
         });
         startButton.on('pointerout', () => {
             startButton.setBackgroundColor('#074b8a');
         });
         startButton.on('pointerdown', () => {
             this.scene.start('playScene');
+            this.sound.play('click');
         });
 
         // Create View Rules button
@@ -64,12 +66,14 @@ class Menu extends Phaser.Scene {
             .setInteractive({ useHandCursor: true });
         rulesButton.on('pointerover', () => {
             rulesButton.setBackgroundColor('#AAAAAA');
+            this.sound.play('pop');
         });
         rulesButton.on('pointerout', () => {
             rulesButton.setBackgroundColor('#074b8a');
         });
         rulesButton.on('pointerdown', () => {
             this.scene.start('guideScene');
+            this.sound.play('click');
         });
 
         // Remove keyboard navigation for these actions

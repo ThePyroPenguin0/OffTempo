@@ -5,7 +5,7 @@ class Turn extends Phaser.Scene {
     create() {
         this.won = false;
         this.ScoreMatrix = this.plugins.get('ScoreMatrix');
-        let promptText = this.add.text(game.config.width / 2, game.config.height / 2, `Enter the turn code given by your referee for turn ${this.ScoreMatrix.getTurn()}:`, {
+        let promptText = this.add.text(game.config.width / 2, game.config.height / 2, `Enter the turn code given by your referee for turn ${this.ScoreMatrix.getTurn()}.\nWhen you have entered the code, press Enter to continue.`, {
             fontFamily: 'Times New Roman',
             bold: 'true',
             fontSize: '32px',
