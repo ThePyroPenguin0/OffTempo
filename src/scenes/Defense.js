@@ -32,7 +32,7 @@ class Defense extends Phaser.Scene {
 
 
         this.add.image(0, 0, 'gradientBG').setOrigin(0, 0);
-        this.minister = this.add.image(config.width * 0.25, config.height * 0.6, 'defense').setScale(1.5).setInteractive({ pixelPerfect: true });
+    this.minister = this.add.image(config.width * 0.25, config.height * 0.6, 'defense').setScale(1.5).setInteractive({ pixelPerfect: true, useHandCursor: true }); // already pixelPerfect
         this.minister.on('pointerover', () => {
             if (!this.clicked) {
                 this.minister.setTint(0xdddddd);
@@ -249,7 +249,7 @@ class Defense extends Phaser.Scene {
             color: '#FF0000',
             backgroundColor: '#DDDDDD',
             padding: { x: 10, y: 5 }
-        }).setInteractive();
+    }).setInteractive({ useHandCursor: true });
 
         backButton.on('pointerover', () => {
             backButton.setBackgroundColor('#AAAAAA');

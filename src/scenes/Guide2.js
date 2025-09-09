@@ -19,7 +19,7 @@ class Guide2 extends Phaser.Scene {
             textStyle
         ).setOrigin(0.5, 0);
 
-        const deputySprite = this.add.image(config.width * 0.9, config.height * 0.2, "deputyS").setOrigin(0.5).setScale(0.4).setInteractive();
+    const deputySprite = this.add.image(config.width * 0.9, config.height * 0.2, "deputyS").setOrigin(0.5).setScale(0.4).setInteractive({ useHandCursor: true });
         deputySprite.on('pointerover', () => {
             deputySprite.setTint(0xdddddd);
             this.sound.play('pop');
@@ -31,7 +31,7 @@ class Guide2 extends Phaser.Scene {
             this.sound.play('click');
         });
 
-        const bankerSprite = this.add.image(config.width * 0.9, config.height * 0.375, "bankerS").setOrigin(0.5).setScale(0.4).setInteractive();
+    const bankerSprite = this.add.image(config.width * 0.9, config.height * 0.375, "bankerS").setOrigin(0.5).setScale(0.4).setInteractive({ useHandCursor: true });
         bankerSprite.on('pointerover', () => {
             bankerSprite.setTint(0xdddddd);
             this.sound.play('pop');
@@ -43,7 +43,7 @@ class Guide2 extends Phaser.Scene {
             this.sound.play('click');
         });
 
-        const defenseSprite = this.add.image(config.width * 0.9, config.height * 0.55, "defenseS").setOrigin(0.5).setScale(0.4).setInteractive();
+    const defenseSprite = this.add.image(config.width * 0.9, config.height * 0.55, "defenseS").setOrigin(0.5).setScale(0.4).setInteractive({ useHandCursor: true });
         defenseSprite.on('pointerover', () => {
             defenseSprite.setTint(0xdddddd);
             this.sound.play('pop');
@@ -55,7 +55,7 @@ class Guide2 extends Phaser.Scene {
             this.sound.play('click');
         });
 
-        const jingoSprite = this.add.image(config.width * 0.9, config.height * 0.7, "jingoS").setOrigin(0.5).setScale(0.4).setInteractive();
+    const jingoSprite = this.add.image(config.width * 0.9, config.height * 0.7, "jingoS").setOrigin(0.5).setScale(0.4).setInteractive({ useHandCursor: true });
         jingoSprite.on('pointerover', () => {
             jingoSprite.setTint(0xdddddd);
             this.sound.play('pop');

@@ -33,7 +33,7 @@ class Review extends Phaser.Scene {
             backgroundColor: '#074b8a',
             padding: { x: 10, y: 10 },
             align: 'center',
-        }).setOrigin(0.5).setInteractive();
+    }).setOrigin(0.5).setInteractive({ useHandCursor: true });
 
         downloadText.on('pointerover', () => {
             downloadText.setBackgroundColor('#AAAAAA');

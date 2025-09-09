@@ -18,7 +18,7 @@ class Play extends Phaser.Scene {
         this.consumption = this.add.image(game.config.width * 0.75, game.config.height * 0.7, "deputy");
         this.consumption.down = false;
 
-        this.offense.setInteractive({
+    this.offense.setInteractive({ useHandCursor: true,
             pixelPerfect: true
         });
         this.offense.on('pointerover', () => {
@@ -26,7 +26,7 @@ class Play extends Phaser.Scene {
             this.sound.play('pop');
         });
 
-        this.defense.setInteractive({
+    this.defense.setInteractive({ useHandCursor: true,
             pixelPerfect: true
         });
         this.defense.on('pointerover', () => {
@@ -34,7 +34,7 @@ class Play extends Phaser.Scene {
             this.sound.play('pop');
         });
 
-        this.finance.setInteractive({
+    this.finance.setInteractive({ useHandCursor: true,
             pixelPerfect: true
         });
         this.finance.on('pointerover', () => {
@@ -42,7 +42,7 @@ class Play extends Phaser.Scene {
             this.sound.play('pop');
         });
 
-        this.consumption.setInteractive({
+    this.consumption.setInteractive({ useHandCursor: true,
             pixelPerfect: true
         });
         this.consumption.on('pointerover', () => {
@@ -104,8 +104,9 @@ class Play extends Phaser.Scene {
             padding: { x: 20, y: 20 }
         });
 
-        this.turnButton = this.add.image(game.config.width * 0.5, game.config.height * 0.95, "turnButton").setScale(1, 0.5).setInteractive();
-        this.turnButton.on('pointerdown', () => {
+    this.turnButton = this.add.image(game.config.width * 0.5, game.config.height * 0.95, "turnButton").setScale(1, 0.5).setInteractive({ useHandCursor: true });
+    this.turnButton.setInteractive({ useHandCursor: true, pixelPerfect: true });
+    this.turnButton.on('pointerdown', () => {
             this.sound.play('click');
             if (this.ScoreMatrix.getTurnBudget() > 1) { // Temporary fix to allow game progression
                 this.showPopup(`Not all money has been spent!\nThe turn will not end until all money has been allocated.\nCurrently, the budget is allocated as follows:\nConsumption: ${this.ScoreMatrix.getMatrixEntry(0, this.ScoreMatrix.getTurn() - 1, 1)}\nInvestment: ${this.ScoreMatrix.getMatrixEntry(1, this.ScoreMatrix.getTurn() - 1, 1)}\nDefense: ${this.ScoreMatrix.getMatrixEntry(2, this.ScoreMatrix.getTurn() - 1, 1)}\nOffense: ${this.ScoreMatrix.getMatrixEntry(3, this.ScoreMatrix.getTurn() - 1, 1)}\n`);
@@ -124,8 +125,9 @@ class Play extends Phaser.Scene {
             this.turnButton.clearTint();
         });
 
-        this.warButton = this.add.image(game.config.width * 0.7, game.config.height * 0.95, "warButton").setScale(1, 0.5).setInteractive();
-        this.warButton.on('pointerdown', () => {
+    this.warButton = this.add.image(game.config.width * 0.7, game.config.height * 0.95, "warButton").setScale(1, 0.5).setInteractive({ useHandCursor: true });
+    this.warButton.setInteractive({ useHandCursor: true, pixelPerfect: true });
+    this.warButton.on('pointerdown', () => {
             this.sound.play('click');
             this.scene.start("warScene");
         });
@@ -138,8 +140,9 @@ class Play extends Phaser.Scene {
             this.warButton.clearTint();
         });
 
-        this.reportButton = this.add.image(game.config.width * 0.3, game.config.height * 0.95, "reportButton").setScale(1, 0.5).setInteractive();
-        this.reportButton.on('pointerdown', () => {
+    this.reportButton = this.add.image(game.config.width * 0.3, game.config.height * 0.95, "reportButton").setScale(1, 0.5).setInteractive({ useHandCursor: true });
+    this.reportButton.setInteractive({ useHandCursor: true, pixelPerfect: true });
+    this.reportButton.on('pointerdown', () => {
             this.scene.start("reportScene");
             this.sound.play('click');
         });
@@ -152,8 +155,9 @@ class Play extends Phaser.Scene {
             this.reportButton.clearTint();
         });
 
-        this.exitButton = this.add.image(game.config.width * 0.95, game.config.height * 0.075, "exitButton").setScale(0.5, 0.5).setInteractive();
-        this.exitButton.on('pointerdown', () => {
+    this.exitButton = this.add.image(game.config.width * 0.95, game.config.height * 0.075, "exitButton").setScale(0.5, 0.5).setInteractive({ useHandCursor: true });
+    this.exitButton.setInteractive({ useHandCursor: true, pixelPerfect: true });
+    this.exitButton.on('pointerdown', () => {
             this.sound.play('click');
             this.ScoreMatrix.resetMatrix();
             this.scene.start('menuScene');
@@ -167,8 +171,9 @@ class Play extends Phaser.Scene {
             this.exitButton.clearTint();
         });
 
-        this.rulebook = this.add.image(game.config.width * 0.95, game.config.height * 0.15, "book").setScale(1).setInteractive();
-        this.rulebook.on('pointerdown', () => {
+    this.rulebook = this.add.image(game.config.width * 0.95, game.config.height * 0.15, "book").setScale(1).setInteractive({ useHandCursor: true });
+    this.rulebook.setInteractive({ useHandCursor: true, pixelPerfect: true });
+    this.rulebook.on('pointerdown', () => {
             this.sound.play('click');
             this.scene.start('guideScene', { ingame: true });
         });

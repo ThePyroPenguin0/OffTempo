@@ -17,7 +17,7 @@ class ViewMatrix extends Phaser.Scene {
             color: '#FF0000',
             backgroundColor: '#DDDDDD',
             padding: { x: 10, y: 5 }
-        }).setInteractive();
+    }).setInteractive({ useHandCursor: true });
 
         backButton.on('pointerover', () => {
             backButton.setBackgroundColor('#AAAAAA');

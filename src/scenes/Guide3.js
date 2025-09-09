@@ -15,11 +15,11 @@ class Guide3 extends Phaser.Scene {
         };
 
         this.add.text(config.width * 0.5, config.height * 0.1,
-            `HINTS:\n\nClicking on advisors in their respective windows will have them share their advice and perspective on the current turn. They will always give you their genuine and honest advice. They will NOT always give you helpful advice.\n\nThis guide can be accessed at any time in-game by clicking the book icon (currently displayed on the right) in the top right corner of the game screen.\n\nIf moving your mouse over an object highlights it and plays a "pop" sound, that object can be clicked on for an interaction. Try it on the book icon or the minister icons on the previous page!`,
+            `HINTS:\n\nClicking on advisors in their respective windows will have them share their advice and perspective on the current turn. They will always give you their genuine and honest advice. They will NOT always give you helpful advice.\n\nThis guide can be accessed at any time in-game by clicking the book icon (currently displayed on the right) in the top right corner of the game screen.\n\nIf moving your mouse over an object highlights it and plays a "pop" sound, that object can be clicked on for an interaction. Try it on the book icon or the minister icons on the previous page! Doing so will play the sounds and give you an idea of what to expect in-game.`,
             textStyle
         ).setOrigin(0.5, 0);
 
-        this.rulebook = this.add.image(game.config.width * 0.925, game.config.height * 0.33, "book").setScale(1).setInteractive();
+    this.rulebook = this.add.image(game.config.width * 0.925, game.config.height * 0.33, "book").setScale(1).setInteractive({ useHandCursor: true });
         this.rulebook.on('pointerover', () => {
             this.rulebook.setTint(0xdddddd);
             this.sound.play('pop');
