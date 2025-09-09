@@ -87,14 +87,15 @@ class Offense extends Phaser.Scene {
         );
         bubbleGraphics.setVisible(false);
 
-        this.dialogText = this.add.text(bubbleX + 20, bubbleY + 20, "You should not see this!", {
+       this.dialogText = this.add.text(0, 0, "You should not see this!", {
             fontFamily: 'Courier, monospace',
             fontSize: '28px',
-            align: `center`,
+            align: "center",
             color: '#000000',
-            wordWrap: { width: dialogWidth * 0.9 - 30 }
-
+            wordWrap: { width: bubbleWidth - 40 }
         });
+        this.dialogText.setOrigin(0.5, 0.5);
+        this.dialogText.setPosition(bubbleX + bubbleWidth / 2, bubbleY + bubbleHeight / 2);
 
         this.dialogText.setVisible(false);
 

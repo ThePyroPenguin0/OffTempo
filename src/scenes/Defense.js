@@ -53,7 +53,7 @@ class Defense extends Phaser.Scene {
         let dialogWidth = width * 0.5;
         let dialogHeight = height * 0.4;
         let dialogX = width - dialogWidth - 20;
-        let dialogY = height - dialogHeight - 20;
+        let dialogY = height - dialogHeight - 20; 
         let padding = 10;
 
         let graphics = this.add.graphics();
