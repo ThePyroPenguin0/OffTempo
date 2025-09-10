@@ -100,7 +100,7 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
     displayMatrix(scene) {
         this.updateMatrix(4, 0, 0, 100);
         const matrix = this.getMatrix();
-        const matrixWidth = 5; // Now 5 resources
+        const matrixWidth = 5;
         const matrixHeight = 10;
         const totalMatrixWidth = matrixWidth * 150 + (matrixWidth - 1) * 2;
         const startX = (scene.sys.game.config.width / 2) - (totalMatrixWidth / 2);
@@ -140,7 +140,6 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
                 const value = matrix[row][col];
                 let displayValue;
                 if (row === 4) {
-                    // Budget: only show absolute value
                     displayValue = `$${value[0]}`;
                 } else {
                     displayValue = `${value[0]}, (${value[1]}%)`;
@@ -173,7 +172,7 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
     setBudgetForTurn(turn) {
         if (turn >= 0 && turn < 10) {
             this.matrix[4][turn][0] = this.budget;
-            this.matrix[4][turn][1] = 0; // percent column not used for Budget
+            this.matrix[4][turn][1] = 0; // Percent column is not used for Budget. Do not change.
         }
     }
 

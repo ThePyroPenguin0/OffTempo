@@ -31,17 +31,6 @@ class ViewMatrix extends Phaser.Scene {
             this.sound.play('click');
             this.scene.start('playScene');
         });
-        
-        // this.input.keyboard.on('keydown-ESC', () => {
-        //     console.log(`Current stats:
-        //         ${this.turn} turns played\n
-        //         ${this.ScoreMatrix.sumRow(0)} spent on consumption\n
-        //         ${this.ScoreMatrix.sumRow(1)} spent on investment\n
-        //         ${this.ScoreMatrix.sumRow(2)} spent on defense\n
-        //         ${this.ScoreMatrix.sumRow(3)} spent on offense\n
-        //         `);
-        //     this.scene.start('playScene', { turn: this.turn });
-        // });
     }
 
     update() {
