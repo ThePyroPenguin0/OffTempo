@@ -6,7 +6,7 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
             Array.from({ length: 10 }, () => [0, 0])
         );
         this.turn = 1;
-        this.budget = 100;
+        this.budget = 100.00;
         this.turnBudget = this.budget; // this.turnBudget -= this.budget * percetnage allocated
         this.turnCodes = [145, 682, 185, 158, 973, 170, 709, 742, 288, 108];
         this.consumptionThreshold = 0;
@@ -49,6 +49,7 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
     updateBudget(turn) {
         console.log(`Old budget: ${this.budget}`);
         this.budget += this.getMatrixEntry(1, turn - 1, 0);
+        this.budget = Math.round(this.budget * 100) / 100;
         this.turnBudget = this.budget;
         this.matrix[4][turn][0] = this.budget;
         this.matrix[4][turn][1] = 0;
@@ -173,7 +174,7 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
 
     setBudgetForTurn(turn) {
         if (turn >= 0 && turn < 10) {
-            this.matrix[4][turn][0] = this.budget;
+            this.matrix[4][turn][0] = Math.round(this.budget * 100) / 100;
             this.matrix[4][turn][1] = 0; // Percent column is not used for Budget. Do not change.
         }
     }
@@ -205,7 +206,7 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
             Array.from({ length: 10 }, () => [0, 0])
         );
         this.turn = 1;
-        this.budget = 100;
+        this.budget = 100.00;
         this.turnBudget = this.budget;
         this.consumptionThreshold = 0;
         this.totalDefense = 0;
