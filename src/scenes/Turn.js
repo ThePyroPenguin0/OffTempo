@@ -42,6 +42,8 @@ class Turn extends Phaser.Scene {
             }
             if (event.key === 'Enter') {
                 if (inputText.text == this.ScoreMatrix.getTurnCode() || inputText.text == 1) {
+                    this.ScoreMatrix.defenseUpdate();
+                    this.ScoreMatrix.offenseUpdate();
                     this.ScoreMatrix.advanceTurn();
                     this.ScoreMatrix.updateBudget(this.ScoreMatrix.getTurn()-1);
                     this.scene.start("playScene");

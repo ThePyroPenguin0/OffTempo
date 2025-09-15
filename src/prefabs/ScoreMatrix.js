@@ -10,6 +10,8 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
         this.turnBudget = this.budget; // this.turnBudget -= this.budget * percetnage allocated
         this.turnCodes = [145, 682, 185, 158, 973, 170, 709, 742, 288, 108];
         this.consumptionThreshold = 0;
+        this.totalOffense = 0;
+        this.totalDefense = 0;
     }
 
     updateMatrix(resource, turn, bud, value) {
@@ -178,8 +180,20 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
 
     consumptionUpdate() {
         this.consumptionThreshold += this.getMatrixEntry(0, this.getTurn() - 1, 0);
-        console.log(`Running consumption total: ${this.consumptionThreshold}`)
+        // console.log(`Running consumption total: ${this.consumptionThreshold}`)
         return this.consumptionThreshold;
+    }
+
+    defenseUpdate() {
+        console.log(`Defense update for turn ${this.getTurn()}: +${this.getMatrixEntry(2, this.getTurn() - 1, 0)}`);
+        this.totalDefense += this.getMatrixEntry(2, this.getTurn() - 1, 0);
+        console.log(`Running defense total: ${this.totalDefense}`);
+    }
+
+    offenseUpdate() {
+        console.log(`Offense update for turn ${this.getTurn()}: +${this.getMatrixEntry(3, this.getTurn() - 1, 0)}`);
+        this.totalOffense += this.getMatrixEntry(3, this.getTurn() - 1, 0);
+        console.log(`Running offense total: ${this.totalOffense}`);
     }
 
     sumRow(resource) {
@@ -194,6 +208,8 @@ class ScoreMatrix extends Phaser.Plugins.BasePlugin {
         this.budget = 100;
         this.turnBudget = this.budget;
         this.consumptionThreshold = 0;
+        this.totalDefense = 0;
+        this.totalOffense = 0;
     }
 
     getMatrixAsText() {

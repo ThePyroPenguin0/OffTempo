@@ -6,7 +6,7 @@ class War extends Phaser.Scene {
     create() {
         this.add.image(config.width / 2, config.height / 2, "warTable").setOrigin(0.5, 0.5);
         this.ScoreMatrix = this.plugins.get('ScoreMatrix');
-        this.add.text(config.width / 2, config.height / 2, `Total offense: ${this.ScoreMatrix.sumRow(3)}\n\nTotal defense: ${this.ScoreMatrix.sumRow(2)}`, {
+        this.add.text(config.width / 2, config.height / 2, `Total offense: ${this.ScoreMatrix.totalOffense}\n\nTotal defense: ${this.ScoreMatrix.totalDefense}`, {
             fontSize: '18px',
             fill: "#000000",
             align: 'center',
